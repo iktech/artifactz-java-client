@@ -13,6 +13,27 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+jacoco {
+    toolVersion = "0.8.6"
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.isEnabled = true
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "io.iktech"
+            artifactId = "artifactz-client"
+            version = "1.0"
+
+            from(components["java"])
+        }
+    }
+}
 
 repositories {
     // Use JCenter for resolving dependencies.

@@ -30,4 +30,8 @@ jobs:
       with:
         files: build/test-results/**/*.xml
         github_token: ${{ secrets.GITHUB_TOKEN }}
-    
+    - name: OWASP Analysis
+      run: ./gradlew dependencyCheckPurge dependencyCheckAnalyze
+    - name: JaCoCo Test Report
+      run: ./gradlew jacocoTestReport
+

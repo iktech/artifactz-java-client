@@ -1,4 +1,6 @@
 # Artifactz.io client library
+![Build](https://github.com/iktech/artifactz-java-client/workflows/Build/badge.svg)
+
 Artifactz.io is a service helping users to track project artifacts through
 the different stages of their lifecycle.
 
