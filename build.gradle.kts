@@ -32,7 +32,7 @@ signing {
     val signingKey = System.getenv("GPG_KEY")
     if (signingKey != null) {
         val signingPassword = System.getenv("GPG_PASSPHRASE")
-
+        print(signingKey)
         useInMemoryPgpKeys(signingKey, signingPassword)
     }
     sign(configurations.archives.get()  )
