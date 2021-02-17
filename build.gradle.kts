@@ -1,14 +1,16 @@
 val compatibility: String by project
-val nexusUrl: String by project
-val nexusUsername: String by project
-val nexusPassword: String by project
+val ossUsername: String by project
+val ossPassword: String by project
+val tagName = System.getenv("RELEASE_TAG")
+version = tagName ?: "1.0-SNAPSHOT"
 
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     id("java-library")
     id("maven-publish")
     id("jacoco")
-    id("org.owasp.dependencycheck") version "6.1.0"
+    id("signing")
+    id("org.owasp.dependencycheck") version "6.1.1"
 }
 
 java {
@@ -26,12 +28,23 @@ tasks.jacocoTestReport {
     }
 }
 
+signing {
+    val signingKey = System.getenv("GPG_KEY")
+    print(signingKey)
+    if (signingKey != null) {
+        print("In memory")
+        val signingPassword = System.getenv("GPG_PASSPHRASE")
+
+        useInMemoryPgpKeys(signingKey, signingPassword)
+    }
+    sign(configurations.archives.get()  )
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
             groupId = "io.iktech"
             artifactId = "artifactz-client"
-            version = "1.0.0"
 
             from(components["java"])
 
@@ -47,7 +60,7 @@ publishing {
                 }
                 developers {
                     developer {
-                        id.set("igor.kolomiyets")
+                        id.set("ikolomiyets-iktech")
                         name.set("Igor Kolomiyets")
                         email.set("igor.kolomiyets@iktech.io")
                     }
@@ -63,11 +76,14 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = System.getenv("MAVEN_USERNAME")
-                password = System.getenv("MAVEN_PASSWORD")
+                username = System.getenv("MAVEN_USERNAME") ?: ossUsername
+                password = System.getenv("MAVEN_PASSWORD") ?: ossPassword
             }
 
-            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            val snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+
+            url = uri(if (version.toString().endsWith("-SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
         }
     }
 }
