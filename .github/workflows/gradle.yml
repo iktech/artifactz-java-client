@@ -34,4 +34,8 @@ jobs:
       run: ./gradlew dependencyCheckPurge dependencyCheckAnalyze
     - name: JaCoCo Test Report
       run: ./gradlew jacocoTestReport
-
+    - name: SonarQube Scan
+      uses: kitabisa/sonarqube-action@master
+      with:
+        host: ${{ secrets.SONARQUBE_HOST }}
+        login: ${{ secrets.SONARQUBE_TOKEN }}
