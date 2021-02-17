@@ -30,6 +30,12 @@ import java.util.stream.Collectors;
 
 import static io.artifactz.client.FeedbackLevel.INFO;
 
+/**
+ * This class provides methods to interact with Artifactz.io service allowing to:
+ *   - publish new artifact or the new version of the existing artifact
+ *   - push artifact through the flow if artifact is associated with one
+ *   - retrieve versions of the artifacts at a specific stage from the service
+ */
 public class ServiceClient {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -41,6 +47,17 @@ public class ServiceClient {
     final String proxyPassword;
     final Feedback feedback;
 
+    /**
+     * Service client constructor
+     *
+     * @param baseUrl service base Url
+     * @param apiToken service API token
+     * @param sender sender identifier
+     * @param proxyUrl proxy server Url
+     * @param proxyUsername proxy username
+     * @param proxyPassword proxy password
+     * @param feedback feedback interface implementation
+     */
     public ServiceClient(String baseUrl, String apiToken, String sender, String proxyUrl, String proxyUsername, String proxyPassword, Feedback feedback) {
         this.baseUrl = baseUrl;
         this.apiToken = apiToken;
@@ -51,6 +68,16 @@ public class ServiceClient {
         this.feedback = feedback;
     }
 
+    /**
+     * Retrieves artifacts from at the specified stage
+     *
+     * @param stage stage name
+     * @param artifacts array of the artifact names to retrieve
+     *
+     * @return object containing the details of the found artifacts
+     *
+     * @throws ClientException in case of the any failure to get artifact details
+     */
     public Stage retrieveVersions(String stage, String[] artifacts) throws ClientException {
         CloseableHttpClient client = HttpClients.createDefault();
         String artifactsQuery = Arrays.stream(artifacts).map(a -> "artifact=" + a).collect(Collectors.joining("&"));
@@ -92,6 +119,20 @@ public class ServiceClient {
         return null;
     }
 
+    /**
+     * Publishes artifact version to a specified stage. If stage does not exist service will automatically creates it.
+     *
+     * @param stage stage name
+     * @param stageDescription stage description
+     * @param name artifact name
+     * @param description artifact description
+     * @param flow flow name
+     * @param type artifact type
+     * @param groupId maven group Id (for java artifacts only)
+     * @param artifactId maven artifact Id (for java artifacts only)
+     * @param version artifact version
+     * @throws ClientException if method fails to publish artifact
+     */
     public void publishArtifact(String stage, String stageDescription, String name, String description, String flow, String type, String groupId, String artifactId, String version) throws ClientException {
         this.sendMessage(INFO, "Patching the artifact version details at the stage '" + stage + "' to the Artifactor instance @ " + this.baseUrl);
         this.sendMessage(INFO, "Artifact details:");
@@ -156,6 +197,14 @@ public class ServiceClient {
         }
     }
 
+    /**
+     * Pushes artifact through flow
+     *
+     * @param stage stage name from where artifact version should be pushed
+     * @param name name of the artifact to push
+     * @param version artifact version to push
+     * @throws ClientException if error occurs during attempt to push artifact
+     */
     public void pushArtifact(String stage, String name, String version) throws ClientException {
         this.sendMessage(INFO, "Pushing the artifact version '" + version + "' at the stage '" + stage + "'");
         this.sendMessage(INFO, "Performing PUT request to  to the Artifactor instance @" + this.baseUrl);

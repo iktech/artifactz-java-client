@@ -2,6 +2,7 @@ val compatibility: String? by project
 val ossUsername: String? by project
 val ossPassword: String? by project
 val tagName = System.getenv("RELEASE_TAG")
+group = "io.iktech"
 version = tagName ?: "1.0-SNAPSHOT"
 
 plugins {
@@ -16,6 +17,8 @@ plugins {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+    withJavadocJar()
+    withSourcesJar()
 }
 
 jacoco {
@@ -28,20 +31,9 @@ tasks.jacocoTestReport {
     }
 }
 
-signing {
-    val signingKey = System.getenv("GPG_KEY")
-    if (signingKey != null) {
-        val signingPassword = System.getenv("GPG_PASSPHRASE")
-        print(signingKey)
-        useInMemoryPgpKeys(signingKey, signingPassword)
-    }
-    sign(configurations.archives.get()  )
-}
-
 publishing {
     publications {
-        create<MavenPublication>("maven") {
-            groupId = "io.iktech"
+        create<MavenPublication>("mavenJava") {
             artifactId = "artifactz-client"
 
             from(components["java"])
@@ -71,6 +63,7 @@ publishing {
             }
         }
     }
+
     repositories {
         maven {
             credentials {
@@ -84,6 +77,15 @@ publishing {
             url = uri(if (version.toString().endsWith("-SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
         }
     }
+}
+
+signing {
+    val signingKey = System.getenv("GPG_KEY")
+    if (signingKey != null) {
+        val signingPassword = System.getenv("GPG_PASSPHRASE")
+        useInMemoryPgpKeys(signingKey, signingPassword)
+    }
+    sign(publishing.publications["mavenJava"])
 }
 
 repositories {
