@@ -1,4 +1,7 @@
 val compatibility: String by project
+val nexusUrl: String by project
+val nexusUsername: String by project
+val nexusPassword: String by project
 
 plugins {
     // Apply the java-library plugin for API and implementation separation.
@@ -31,6 +34,40 @@ publishing {
             version = "1.0.0"
 
             from(components["java"])
+
+            pom {
+                name.set("artifactz-client")
+                description.set("Artifactz.io Java Client Library")
+                url.set("https://github.com/iktech/artifactz-java-client")
+                    licenses {
+                    license {
+                        name.set("The MIT License (MIT)")
+                        url.set("https://raw.githubusercontent.com/iktech/artifactz-java-client/master/LICENSE")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("igor.kolomiyets")
+                        name.set("Igor Kolomiyets")
+                        email.set("igor.kolomiyets@iktech.io")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:ssh://git@github.com:iktech/artifactz-java-client.git")
+                    developerConnection.set("scm:git:ssh://git@github.com:iktech/artifactz-java-client.git")
+                    url.set("https://github.com/iktech/artifactz-java-client")
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username = System.getenv("MAVEN_USERNAME")
+                password = System.getenv("MAVEN_PASSWORD")
+            }
+
+            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
         }
     }
 }

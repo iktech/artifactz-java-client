@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.PushbackInputStream;
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PushVersionRequest extends Request {
     private static final long serialVersionUID = 1719249389867475917L;
