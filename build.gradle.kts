@@ -1,6 +1,6 @@
-val compatibility: String by project
-val ossUsername: String by project
-val ossPassword: String by project
+val compatibility: String? by project
+val ossUsername: String? by project
+val ossPassword: String? by project
 val tagName = System.getenv("RELEASE_TAG")
 version = tagName ?: "1.0-SNAPSHOT"
 
@@ -30,9 +30,7 @@ tasks.jacocoTestReport {
 
 signing {
     val signingKey = System.getenv("GPG_KEY")
-    print(signingKey)
     if (signingKey != null) {
-        print("In memory")
         val signingPassword = System.getenv("GPG_PASSPHRASE")
 
         useInMemoryPgpKeys(signingKey, signingPassword)
@@ -76,8 +74,8 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = System.getenv("MAVEN_USERNAME") ?: ossUsername
-                password = System.getenv("MAVEN_PASSWORD") ?: ossPassword
+                username = System.getenv("MAVEN_USERNAME") ?: ossUsername ?: ""
+                password = System.getenv("MAVEN_PASSWORD") ?: ossPassword ?: ""
             }
 
             val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
