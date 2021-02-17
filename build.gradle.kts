@@ -28,7 +28,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "io.iktech"
             artifactId = "artifactz-client"
-            version = "1.0"
+            version = "1.0.0"
 
             from(components["java"])
         }
@@ -42,7 +42,7 @@ repositories {
 }
 
 dependencies {
-    api("org.apache.httpcomponents:httpclient:4.5.10")
+    api("org.apache.httpcomponents:httpclient:4.5.13")
     api("commons-lang:commons-lang:2.6")
     api("com.fasterxml.jackson.core:jackson-annotations:2.12.1")
     api("com.fasterxml.jackson.core:jackson-databind:2.12.1")
