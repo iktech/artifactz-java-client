@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.artifactz.client.FeedbackLevel.INFO;
 
@@ -73,14 +74,15 @@ public class ServiceClient {
      *
      * @param stage stage name
      * @param artifacts array of the artifact names to retrieve
+     * @param javaArtifacts array of the java artifact names in the format groupId:artifactId to retrieve
      *
      * @return object containing the details of the found artifacts
      *
      * @throws ClientException in case of the any failure to get artifact details
      */
-    public Stage retrieveVersions(String stage, String[] artifacts) throws ClientException {
+    public Stage retrieveVersions(String stage, String[] artifacts, String[] javaArtifacts) throws ClientException {
         CloseableHttpClient client = HttpClients.createDefault();
-        String artifactsQuery = Arrays.stream(artifacts).map(a -> "artifact=" + a).collect(Collectors.joining("&"));
+        String artifactsQuery = Stream.concat(Arrays.stream(artifacts).map(a -> "artifact=" + a), Arrays.stream(javaArtifacts).map(a -> "java_artifact=" + a)).collect(Collectors.joining("&"));
         HttpGet getVersion = new HttpGet(this.baseUrl + "/stages/" + stage + "/list?" + artifactsQuery);
 
         try {
