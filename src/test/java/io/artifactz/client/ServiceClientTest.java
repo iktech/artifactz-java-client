@@ -100,8 +100,28 @@ public class ServiceClientTest {
                 .withSender("init-test")
                 .build();
 
-        Stage stage = client.retrieveVersions("Development",
-                new String[]{"test-data", "test-api"}, new String[] {});
+        Stage stage = client.retrieveVersions("Development","test-data", "test-api");
+        assertNotNull(stage);
+        assertEquals("Development", stage.getStage());
+        assertEquals(1, stage.getArtifacts().size());
+        assertEquals("test-data", stage.getArtifacts().get(0).getArtifactName());
+        assertEquals("Test Data Library", stage.getArtifacts().get(0).getArtifactDescription());
+        assertEquals("JAR", stage.getArtifacts().get(0).getType());
+        assertEquals("io.iktech.test", stage.getArtifacts().get(0).getGroupId());
+        assertEquals("test-data", stage.getArtifacts().get(0).getArtifactId());
+        assertEquals("1.0.0", stage.getArtifacts().get(0).getVersion());
+    }
+
+    @Test
+    public void testRetrieveVersion() throws ClientException {
+        ServiceClient client = ServiceClientBuilder
+                .withBaseUrl("https://artifactor-uat.iktech.io")
+                .withApiToken(TOKEN_READ_WRITE)
+                .provideFeedback(new UnitTestFeedback())
+                .withSender("init-test")
+                .build();
+
+        Stage stage = client.retrieveVersions("Development", "test-data");
         assertNotNull(stage);
         assertEquals("Development", stage.getStage());
         assertEquals(1, stage.getArtifacts().size());
@@ -122,8 +142,28 @@ public class ServiceClientTest {
                 .withSender("init-test")
                 .build();
 
-        Stage stage = client.retrieveVersions("Development",
-                new String[]{}, new String[] {"io.iktech.test:test-data"});
+        Stage stage = client.retrieveJavaVersions("Development", "io.iktech.test:test-data");
+        assertNotNull(stage);
+        assertEquals("Development", stage.getStage());
+        assertEquals(1, stage.getArtifacts().size());
+        assertEquals("test-data", stage.getArtifacts().get(0).getArtifactName());
+        assertEquals("Test Data Library", stage.getArtifacts().get(0).getArtifactDescription());
+        assertEquals("JAR", stage.getArtifacts().get(0).getType());
+        assertEquals("io.iktech.test", stage.getArtifacts().get(0).getGroupId());
+        assertEquals("test-data", stage.getArtifacts().get(0).getArtifactId());
+        assertEquals("1.0.0", stage.getArtifacts().get(0).getVersion());
+    }
+
+    @Test
+    public void testRetrieveVersionJava() throws ClientException {
+        ServiceClient client = ServiceClientBuilder
+                .withBaseUrl("https://artifactor-uat.iktech.io")
+                .withApiToken(TOKEN_READ_WRITE)
+                .provideFeedback(new UnitTestFeedback())
+                .withSender("init-test")
+                .build();
+
+        Stage stage = client.retrieveJavaVersions("Development", "io.iktech.test:test-data");
         assertNotNull(stage);
         assertEquals("Development", stage.getStage());
         assertEquals(1, stage.getArtifacts().size());
@@ -145,12 +185,43 @@ public class ServiceClientTest {
                     .withSender("init-test")
                     .build();
 
-            client.retrieveVersions("Development",
-                    new String[]{"test-data", "test-api"}, new String[]{});
+            client.retrieveVersions("Development", "test-data", "test-api");
             fail();
         } catch (ClientException e) {
             assertEquals("Failed to get data from the Artifactor Server", e.getMessage());
             assertEquals("Unauthorized", e.getCause().getMessage());
         }
+    }
+
+    @Test
+    public void testRetrieveVersionsEmpty() throws Exception {
+        ServiceClient client = ServiceClientBuilder
+                .withBaseUrl("https://artifactor-uat.iktech.io")
+                .withApiToken(TOKEN_READ_ONLY)
+                .provideFeedback(new UnitTestFeedback())
+                .withSender("init-test")
+                .build();
+
+        Stage stage = client.retrieveVersions("Automated Integration Tests", "test-data", "test-api");
+
+        assertNotNull(stage);
+        assertEquals("Automated Integration Tests", stage.getStage());
+        assertNull(stage.getArtifacts());
+    }
+
+    @Test
+    public void testRetrieveVersionEmpty() throws Exception {
+        ServiceClient client = ServiceClientBuilder
+                .withBaseUrl("https://artifactor-uat.iktech.io")
+                .withApiToken(TOKEN_READ_ONLY)
+                .provideFeedback(new UnitTestFeedback())
+                .withSender("init-test")
+                .build();
+
+        Stage stage = client.retrieveVersions("Automated Integration Tests", "test-data");
+
+        assertNotNull(stage);
+        assertEquals("Automated Integration Tests", stage.getStage());
+        assertNull(stage.getArtifacts());
     }
 }

@@ -29,7 +29,26 @@ public class ServiceClientBuilderTest {
     }
 
     @Test
-    public void testClientBuilderWithNoUrl() throws Exception {
+    public void testClientBuilderProduction() throws Exception {
+        Feedback feedback = new FeedbackImpl();
+        ServiceClient client = ServiceClientBuilder
+                .create()
+                .withApiToken("2cf2363e-4551-43ec-abfd-facfffb17493")
+                .withSender("unit-test")
+                .provideFeedback(feedback).build();
+        assertNotNull(client);
+        assertEquals("https://artifactor.artifactz.io", client.baseUrl);
+        assertEquals("2cf2363e-4551-43ec-abfd-facfffb17493", client.apiToken);
+        assertEquals("unit-test", client.sender);
+        assertNull(client.proxyUrl);
+        assertNull(client.proxyUsername);
+        assertNull(client.proxyPassword);
+        assertNotNull(client.feedback);
+        assertTrue(client.feedback instanceof FeedbackImpl);
+    }
+
+    @Test
+    public void testClientBuilderWithNoUrl() {
         try {
             ServiceClientBuilder
                     .withBaseUrl(null).build();
@@ -40,7 +59,7 @@ public class ServiceClientBuilderTest {
     }
 
     @Test
-    public void testClientBuilderWithNoApiToken() throws Exception {
+    public void testClientBuilderWithNoApiToken() {
         try {
             ServiceClientBuilder
                     .withBaseUrl("https://artifactz-uat.iktech.io")

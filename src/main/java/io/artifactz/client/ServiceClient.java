@@ -70,6 +70,34 @@ public class ServiceClient {
     }
 
     /**
+     * Retrieves only named artifacts from at the specified stage
+     *
+     * @param stage stage name
+     * @param artifacts array of the artifact names to retrieve
+     *
+     * @return object containing the details of the found artifacts
+     *
+     * @throws ClientException in case of the any failure to get artifact details
+     */
+    public Stage retrieveVersions(String stage, String ...artifacts) throws ClientException {
+        return retrieveVersions(stage, artifacts, null);
+    }
+
+    /**
+     * Retrieves only java artifacts from at the specified stage
+     *
+     * @param stage stage name
+     * @param javaArtifacts array of the java artifact names in the format groupId:artifactId to retrieve
+     *
+     * @return object containing the details of the found artifacts
+     *
+     * @throws ClientException in case of the any failure to get artifact details
+     */
+    public Stage retrieveJavaVersions(String stage, String ...javaArtifacts) throws ClientException {
+        return retrieveVersions(stage, null, javaArtifacts);
+    }
+
+    /**
      * Retrieves artifacts from at the specified stage
      *
      * @param stage stage name
@@ -82,8 +110,17 @@ public class ServiceClient {
      */
     public Stage retrieveVersions(String stage, String[] artifacts, String[] javaArtifacts) throws ClientException {
         CloseableHttpClient client = HttpClients.createDefault();
+        if (artifacts == null) {
+            artifacts = new String[]{};
+        }
+
+        if (javaArtifacts == null) {
+            javaArtifacts = new String[]{};
+        }
+
+
         String artifactsQuery = Stream.concat(Arrays.stream(artifacts).map(a -> "artifact=" + a), Arrays.stream(javaArtifacts).map(a -> "java_artifact=" + a)).collect(Collectors.joining("&"));
-        HttpGet getVersion = new HttpGet(this.baseUrl + "/stages/" + stage + "/list?" + artifactsQuery);
+        HttpGet getVersion = new HttpGet(this.baseUrl + "/stages/" + stage.replace(" ", "%20") + "/list?" + artifactsQuery);
 
         try {
             this.setRequestProxy(getVersion);

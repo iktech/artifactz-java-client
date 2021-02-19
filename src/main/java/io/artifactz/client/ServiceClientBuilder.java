@@ -9,6 +9,15 @@ import io.artifactz.client.exception.ClientException;
  * <pre>
  *     {@code
         ServiceClient client = ServiceClientBuilder
+            .create()
+            .withApiToken("2cf2363e-4551-43ec-abfd-facfffb17493")
+            .build();
+ *     }
+ * </pre>
+ * Or if the client is used against the non production environment:
+ * <pre>
+ *     {@code
+        ServiceClient client = ServiceClientBuilder
             .withBaseUrl("https://artifactz-uat.iktech.io")
             .withApiToken("2cf2363e-4551-43ec-abfd-facfffb17493")
             .build();
@@ -63,6 +72,17 @@ public class ServiceClientBuilder {
     public static ServiceClientBuilder withBaseUrl(String baseUrl) {
         ServiceClientBuilder builder = new ServiceClientBuilder();
         builder.baseUrl = baseUrl;
+        return builder;
+    }
+
+    /**
+     * Constructs ServiceClientBuilder pointing to the production instance
+     *
+     * @return builder object for further configuration
+     */
+    public static ServiceClientBuilder create() {
+        ServiceClientBuilder builder = new ServiceClientBuilder();
+        builder.baseUrl = "https://artifactor.artifactz.io";
         return builder;
     }
 
