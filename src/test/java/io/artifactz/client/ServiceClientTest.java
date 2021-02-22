@@ -155,6 +155,35 @@ public class ServiceClientTest {
     }
 
     @Test
+    public void testValidateConnection() throws ClientException {
+        ServiceClient client = ServiceClientBuilder
+                .withBaseUrl("https://artifactor-uat.iktech.io")
+                .withApiToken(TOKEN_READ_WRITE)
+                .provideFeedback(new UnitTestFeedback())
+                .withSender("init-test")
+                .build();
+
+        client.validateConnection();
+    }
+
+    @Test
+    public void testValidateConnectionInvalid() {
+        try {
+            ServiceClient client = ServiceClientBuilder
+                    .withBaseUrl("https://iktech.io")
+                    .withApiToken(TOKEN_READ_WRITE)
+                    .provideFeedback(new UnitTestFeedback())
+                    .withSender("init-test")
+                    .build();
+
+            client.validateConnection();
+            fail();
+        } catch (ClientException e) {
+            assertEquals("Failed to validate connection to the Artifactor instance @https://iktech.io", e.getMessage());
+        }
+    }
+
+    @Test
     public void testRetrieveVersionJava() throws ClientException {
         ServiceClient client = ServiceClientBuilder
                 .withBaseUrl("https://artifactor-uat.iktech.io")

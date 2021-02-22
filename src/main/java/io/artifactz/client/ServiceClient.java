@@ -246,7 +246,7 @@ public class ServiceClient {
      */
     public void pushArtifact(String stage, String name, String version) throws ClientException {
         this.sendMessage(INFO, "Pushing the artifact version '" + version + "' at the stage '" + stage + "'");
-        this.sendMessage(INFO, "Performing PUT request to  to the Artifactor instance @" + this.baseUrl);
+        this.sendMessage(INFO, "Performing PUT request to the Artifactor instance @" + this.baseUrl);
         this.sendMessage(INFO, "Artifact details:");
         this.sendMessage(INFO, "  name: " + name);
         this.sendMessage(INFO, "  stage: " + stage);
@@ -297,6 +297,47 @@ public class ServiceClient {
                 client.close();
             } catch (IOException e) {}
         }
+    }
+
+    public void validateConnection() throws ClientException {
+        this.sendMessage(INFO, "Validating connection to the Artifactor instance @" + this.baseUrl);
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpGet validateConnection = new HttpGet(this.baseUrl + "/validate");
+        try {
+            this.setRequestProxy(validateConnection);
+        } catch (MalformedURLException e) {
+            throw new ClientException("Incorrect proxy URL specified: " + this.proxyUrl);
+        }
+
+        validateConnection.setHeader("Accepts", ContentType.APPLICATION_JSON.getMimeType());
+        validateConnection.setHeader("Authorization", "Bearer " + this.apiToken);
+        if (this.sender != null) {
+            validateConnection.setHeader("X-ClientId", this.sender);
+        }
+
+        CloseableHttpResponse response = null;
+
+        try {
+            response = client.execute(validateConnection);
+            if (response.getStatusLine().getStatusCode() != 200) {
+                this.handleError(response);
+            } else {
+                this.sendMessage(INFO, "Successfully validated connection");
+            }
+        } catch (Exception e) {
+            throw new ClientException("Failed to validate connection to the Artifactor instance @" + this.baseUrl, e);
+        } finally {
+            if (response != null) {
+                try {
+                    response.close();
+                } catch (IOException e) {}
+            }
+
+            try {
+                client.close();
+            } catch (IOException e) {}
+        }
+
     }
 
     private void setRequestProxy(HttpRequestBase request) throws MalformedURLException  {
