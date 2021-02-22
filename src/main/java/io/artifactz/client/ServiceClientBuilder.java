@@ -58,6 +58,11 @@ public class ServiceClientBuilder {
     private String proxyPassword;
 
     /**
+     * User agent externally set by the user program
+     */
+    private String userAgent;
+
+    /**
      * Feedback interface implementation
      */
     private Feedback feedback;
@@ -147,6 +152,18 @@ public class ServiceClientBuilder {
     }
 
     /**
+     * Adds user agent to the client
+     *
+     * @param userAgent user agent
+     *
+     * @return configured builder object
+     */
+    public ServiceClientBuilder withUserAgent(String userAgent) {
+        this.userAgent = userAgent;
+        return this;
+    }
+
+    /**
      * Adds Feedback interface implementation
      *
      * @param feedback feedback interface implementation
@@ -174,6 +191,6 @@ public class ServiceClientBuilder {
             throw new ClientException("API Token is required");
         }
 
-        return new ServiceClient(this.baseUrl, this.apiToken, this.sender, this.proxyUrl, this.proxyUsername, this.proxyPassword, this.feedback);
+        return new ServiceClient(this.baseUrl, this.apiToken, this.sender, this.proxyUrl, this.proxyUsername, this.proxyPassword, this.userAgent, this.feedback);
     }
 }

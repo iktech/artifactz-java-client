@@ -48,6 +48,7 @@ public class ServiceClient {
     final String sender;
     final String proxyUsername;
     final String proxyPassword;
+    final String userAgent;
     final Feedback feedback;
 
     /**
@@ -59,15 +60,17 @@ public class ServiceClient {
      * @param proxyUrl proxy server Url
      * @param proxyUsername proxy username
      * @param proxyPassword proxy password
+     * @param userAgent user agent
      * @param feedback feedback interface implementation
      */
-    public ServiceClient(String baseUrl, String apiToken, String sender, String proxyUrl, String proxyUsername, String proxyPassword, Feedback feedback) {
+    public ServiceClient(String baseUrl, String apiToken, String sender, String proxyUrl, String proxyUsername, String proxyPassword, String userAgent, Feedback feedback) {
         this.baseUrl = baseUrl;
         this.apiToken = apiToken;
         this.sender = sender;
         this.proxyUrl = proxyUrl;
         this.proxyUsername = proxyUsername;
         this.proxyPassword = proxyPassword;
+        this.userAgent = userAgent;
         this.feedback = feedback;
     }
 
@@ -239,15 +242,30 @@ public class ServiceClient {
         }
     }
 
+
+    /**
+     * Pushes artifact through flow without specifying the version, i.e. pushes the current version at the specified
+     * stage
+     *
+     * @param stage stage name from where artifact version should be pushed
+     * @param name name of the artifact to push
+     * @return version that was pushed
+     * @throws ClientException if error occurs during attempt to push artifact
+     */
+    public String pushArtifact(String stage, String name) throws ClientException {
+        return pushArtifact(stage, name, null);
+    }
+
     /**
      * Pushes artifact through flow
      *
      * @param stage stage name from where artifact version should be pushed
      * @param name name of the artifact to push
      * @param version artifact version to push
+     * @return version that was pushed
      * @throws ClientException if error occurs during attempt to push artifact
      */
-    public void pushArtifact(String stage, String name, String version) throws ClientException {
+    public String pushArtifact(String stage, String name, String version) throws ClientException {
         this.sendMessage(INFO, "Pushing the artifact version '" + version + "' at the stage '" + stage + "'");
         this.sendMessage(INFO, "Performing PUT request to the Artifactor instance @" + this.baseUrl);
         this.sendMessage(INFO, "Artifact details:");
@@ -283,10 +301,14 @@ public class ServiceClient {
 
         try {
             response = client.execute(pushRequest);
-            if (response.getStatusLine().getStatusCode() != 202) {
+            if (response.getStatusLine().getStatusCode() != 200) {
                 this.handleError(response);
             } else {
                 this.sendMessage(INFO, "Successfully pushed artifact version");
+                PushVersionRequest pushVersionResponse = objectMapper.readValue(EntityUtils.toString(response.getEntity()), PushVersionRequest.class);
+                if (pushVersionResponse != null) {
+                    return pushVersionResponse.getVersion();
+                }
             }
         } catch (Exception e) {
             throw new ClientException("Failed to push artifact version", e);
@@ -301,8 +323,15 @@ public class ServiceClient {
                 client.close();
             } catch (IOException e) {}
         }
+
+        return null;
     }
 
+    /**
+     * Validates client connection to the service instance
+     *
+     * @throws ClientException if error occurs during attempt to validate connection
+     */
     public void validateConnection() throws ClientException {
         this.sendMessage(INFO, "Validating connection to the Artifactor instance @" + this.baseUrl);
         CloseableHttpClient client = this.getHttpClient();
@@ -415,7 +444,7 @@ public class ServiceClient {
     }
 
     private CloseableHttpClient getHttpClient() {
-        return HttpClients.custom().setUserAgent(USER_AGENT + " (" + VersionInfo.getUserAgent("Apache-HttpClient",
-                "org.apache.http.client", getClass()) + ")").build();
+        return HttpClients.custom().setUserAgent((this.userAgent != null ? this.userAgent + " " : "") + USER_AGENT + " " + VersionInfo.getUserAgent("Apache-HttpClient",
+                "org.apache.http.client", getClass())).build();
     }
 }

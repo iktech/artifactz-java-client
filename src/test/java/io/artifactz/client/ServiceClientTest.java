@@ -58,7 +58,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    public void testPushArtifact() throws ClientException {
+    public void testPushArtifactWithVersion() throws ClientException {
         ServiceClient client = ServiceClientBuilder
                 .withBaseUrl("https://artifactor-uat.iktech.io")
                 .withApiToken(TOKEN_READ_WRITE)
@@ -66,9 +66,24 @@ public class ServiceClientTest {
                 .withSender("init-test")
                 .build();
 
-        client.pushArtifact("Development",
-                "test-data",
-                "1.0.0");
+        String version = client.pushArtifact("Development",
+                "test-data", "1.0.0");
+        assertEquals("1.0.0", version);
+    }
+
+    @Test
+    public void testPushArtifact() throws ClientException {
+        ServiceClient client = ServiceClientBuilder
+                .withBaseUrl("https://artifactor-uat.iktech.io")
+                .withApiToken(TOKEN_READ_WRITE)
+                .provideFeedback(new UnitTestFeedback())
+                .withSender("init-test")
+                .withUserAgent("JUnit 5")
+                .build();
+
+        String version = client.pushArtifact("Development",
+                "test-data");
+        assertEquals("1.0.0", version);
     }
 
     @Test
