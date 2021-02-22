@@ -21,6 +21,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.util.VersionInfo;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -39,6 +40,7 @@ import static io.artifactz.client.FeedbackLevel.INFO;
  */
 public class ServiceClient {
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String USER_AGENT = "Artifactz.io-client-library/1.1";
 
     final String baseUrl;
     final String apiToken;
@@ -109,7 +111,8 @@ public class ServiceClient {
      * @throws ClientException in case of the any failure to get artifact details
      */
     public Stage retrieveVersions(String stage, String[] artifacts, String[] javaArtifacts) throws ClientException {
-        CloseableHttpClient client = HttpClients.createDefault();
+        CloseableHttpClient client = this.getHttpClient();
+
         if (artifacts == null) {
             artifacts = new String[]{};
         }
@@ -197,7 +200,7 @@ public class ServiceClient {
         request.setGroupId(groupId);
         request.setArtifactId(artifactId);
         request.setVersion(version);
-        CloseableHttpClient client = HttpClients.createDefault();
+        CloseableHttpClient client = this.getHttpClient();
 
         HttpPut publishRequest = new HttpPut(this.baseUrl + "/artifacts/versions");
 
@@ -261,7 +264,8 @@ public class ServiceClient {
             request.setVersion(version);
         }
 
-        CloseableHttpClient client = HttpClients.createDefault();
+        CloseableHttpClient client = this.getHttpClient();
+
         HttpPut pushRequest = new HttpPut(this.baseUrl + "/artifacts/push");
         try {
             this.setRequestProxy(pushRequest);
@@ -301,8 +305,9 @@ public class ServiceClient {
 
     public void validateConnection() throws ClientException {
         this.sendMessage(INFO, "Validating connection to the Artifactor instance @" + this.baseUrl);
-        CloseableHttpClient client = HttpClients.createDefault();
+        CloseableHttpClient client = this.getHttpClient();
         HttpGet validateConnection = new HttpGet(this.baseUrl + "/validate");
+
         try {
             this.setRequestProxy(validateConnection);
         } catch (MalformedURLException e) {
@@ -407,5 +412,10 @@ public class ServiceClient {
         } else {
             throw new ClientException("Unknown error");
         }
+    }
+
+    private CloseableHttpClient getHttpClient() {
+        return HttpClients.custom().setUserAgent(USER_AGENT + " (" + VersionInfo.getUserAgent("Apache-HttpClient",
+                "org.apache.http.client", getClass()) + ")").build();
     }
 }
