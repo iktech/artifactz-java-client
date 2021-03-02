@@ -27,7 +27,7 @@ public class PublishVersionRequest extends Request {
     /**
      * Flow name
      */
-    @JsonProperty("flow")
+    @JsonProperty("flow_id")
     private String flow;
 
     /**
@@ -89,7 +89,7 @@ public class PublishVersionRequest extends Request {
     @JsonCreator
     public PublishVersionRequest(@JsonProperty(value = "stage", required = true) String stage,
                                  @JsonProperty(value = "stage_description", required = true) String stageDescription,
-                                 @JsonProperty(value = "flow") String flow,
+                                 @JsonProperty(value = "flow_id") String flow,
                                  @JsonProperty(value = "artifact_name", required = true) String name,
                                  @JsonProperty("artifact_description") String description,
                                  @JsonProperty(value = "type", required = true) String type,
@@ -130,6 +130,7 @@ public class PublishVersionRequest extends Request {
      *
      * @return flow name
      */
+    @JsonGetter("flow_id")
     public String getFlow() {
         return flow;
     }

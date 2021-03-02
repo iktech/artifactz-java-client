@@ -31,3 +31,13 @@ jobs:
         RELEASE_TAG: ${{ github.event.release.tag_name }}
         GPG_KEY: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
         GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}
+    - name: Publish Artifact Info
+      uses: iktech/publish-artifact-javascript-action@v1.0.0
+      with:
+        apiToken: ${{ secrets.ARTIFACTZ_TOKEN }}
+        stage: Development
+        flow: github
+        type: JAR
+        groupId: io.iktech
+        artifactId: artifactz-client
+        version: ${{ github.event.release.tag_name }}
