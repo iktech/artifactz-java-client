@@ -107,4 +107,23 @@ dependencies {
 tasks.test {
     // Use junit platform for unit tests.
     useJUnitPlatform()
+    var prop = project.properties["readWriteToken"]
+    if (prop != null) {
+        systemProperty("readWriteToken", prop)
+    }
+
+    prop = project.properties["readOnlyToken"]
+    if (prop != null) {
+        systemProperty("readOnlyToken", prop)
+    }
+
+    prop = project.properties["writeOnlyToken"]
+    if (prop != null) {
+        systemProperty("writeOnlyToken", prop)
+    }
+
+    val url = project.properties["serviceUrl"]
+    if (url != null) {
+        systemProperty("serviceUrl", url)
+    }
 }

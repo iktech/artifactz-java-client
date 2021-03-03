@@ -23,7 +23,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew build -PreadWriteToken="${{ secrets.READ_WRITE_ARTIFACTZ_TEST_TOKEN }}" -PreadOnlyToken="${{ secrets.READ_ONLY_ARTIFACTZ_TEST_TOKEN }}" -PwriteOnlyToken="${{ secrets.WRITE_ONLY_ARTIFACTZ_TEST_TOKEN }}"
       env:
         GPG_KEY: ${{ secrets.OSSRH_GPG_SECRET_KEY }}
         GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_SECRET_KEY_PASSWORD }}

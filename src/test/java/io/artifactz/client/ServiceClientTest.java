@@ -2,20 +2,34 @@ package io.artifactz.client;
 
 import io.artifactz.client.exception.ClientException;
 import io.artifactz.client.model.Stage;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ServiceClientTest {
-    private static final String TOKEN_READ_WRITE = "2b7f0fa0-343a-4a1f-8015-e7801b4152fe";
-    private static final String TOKEN_READ_ONLY = "ae355d37-0bf6-4f8b-990f-5b0ffa5416e0";
-    private static final String TOKEN_WRITE_ONLY = "e7bf5f6e-bde9-4ae5-b01c-077d7935c691";
+    private static String url;
+    private static String readWriteToken;
+    private static String readOnlyToken;
+    private static String writeOnlyToken;
+
+    @BeforeAll
+    public static void prepare() {
+        url = System.getProperty("serviceUrl");
+        if (url == null) {
+            url = "https://artifactor-uat.iktech.io";
+        }
+        readWriteToken = System.getProperty("readWriteToken");
+        readOnlyToken = System.getProperty("readOnlyToken");
+        writeOnlyToken = System.getProperty("writeOnlyToken");
+    }
 
     @Test
+    @Order(1)
     public void testPublishArtifact() throws ClientException {
         ServiceClient client = ServiceClientBuilder
-                .withBaseUrl("https://artifactor-uat.iktech.io")
-                .withApiToken(TOKEN_READ_WRITE)
+                .withBaseUrl(url)
+                .withApiToken(readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -32,11 +46,12 @@ public class ServiceClientTest {
     }
 
     @Test
-    public void testPublishArtifactIncorrectToken() {
+    @Order(2)
+    public void testArtifactIncorrectToken() {
         try {
             ServiceClient client = ServiceClientBuilder
-                    .withBaseUrl("https://artifactor-uat.iktech.io")
-                    .withApiToken(TOKEN_READ_ONLY)
+                    .withBaseUrl(url)
+                    .withApiToken(readOnlyToken)
                     .provideFeedback(new UnitTestFeedback())
                     .withSender("init-test")
                     .build();
@@ -58,10 +73,11 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(3)
     public void testPushArtifactWithVersion() throws ClientException {
         ServiceClient client = ServiceClientBuilder
-                .withBaseUrl("https://artifactor-uat.iktech.io")
-                .withApiToken(TOKEN_READ_WRITE)
+                .withBaseUrl(url)
+                .withApiToken(readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -72,10 +88,11 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(4)
     public void testPushArtifact() throws ClientException {
         ServiceClient client = ServiceClientBuilder
-                .withBaseUrl("https://artifactor-uat.iktech.io")
-                .withApiToken(TOKEN_READ_WRITE)
+                .withBaseUrl(url)
+                .withApiToken(readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .withUserAgent("JUnit 5")
@@ -87,11 +104,12 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(5)
     public void testPushArtifactIncorrectToken() {
         try {
             ServiceClient client = ServiceClientBuilder
-                    .withBaseUrl("https://artifactor-uat.iktech.io")
-                    .withApiToken(TOKEN_READ_ONLY)
+                    .withBaseUrl(url)
+                    .withApiToken(readOnlyToken)
                     .provideFeedback(new UnitTestFeedback())
                     .withSender("init-test")
                     .build();
@@ -107,10 +125,11 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(6)
     public void testRetrieveVersions() throws ClientException {
         ServiceClient client = ServiceClientBuilder
-                .withBaseUrl("https://artifactor-uat.iktech.io")
-                .withApiToken(TOKEN_READ_WRITE)
+                .withBaseUrl(url)
+                .withApiToken(readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -128,10 +147,11 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(7)
     public void testRetrieveVersion() throws ClientException {
         ServiceClient client = ServiceClientBuilder
-                .withBaseUrl("https://artifactor-uat.iktech.io")
-                .withApiToken(TOKEN_READ_WRITE)
+                .withBaseUrl(url)
+                .withApiToken(readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -149,10 +169,11 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(8)
     public void testRetrieveVersionsJava() throws ClientException {
         ServiceClient client = ServiceClientBuilder
-                .withBaseUrl("https://artifactor-uat.iktech.io")
-                .withApiToken(TOKEN_READ_WRITE)
+                .withBaseUrl(url)
+                .withApiToken(readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -170,10 +191,11 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(9)
     public void testValidateConnection() throws ClientException {
         ServiceClient client = ServiceClientBuilder
-                .withBaseUrl("https://artifactor-uat.iktech.io")
-                .withApiToken(TOKEN_READ_WRITE)
+                .withBaseUrl(url)
+                .withApiToken(readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -182,11 +204,12 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(10)
     public void testValidateConnectionInvalid() {
         try {
             ServiceClient client = ServiceClientBuilder
                     .withBaseUrl("https://iktech.io")
-                    .withApiToken(TOKEN_READ_WRITE)
+                    .withApiToken(readWriteToken)
                     .provideFeedback(new UnitTestFeedback())
                     .withSender("init-test")
                     .build();
@@ -199,10 +222,11 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(11)
     public void testRetrieveVersionJava() throws ClientException {
         ServiceClient client = ServiceClientBuilder
-                .withBaseUrl("https://artifactor-uat.iktech.io")
-                .withApiToken(TOKEN_READ_WRITE)
+                .withBaseUrl(url)
+                .withApiToken(readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -220,11 +244,12 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(12)
     public void testRetrieveVersionsIncorrectToken() {
         try {
             ServiceClient client = ServiceClientBuilder
-                    .withBaseUrl("https://artifactor-uat.iktech.io")
-                    .withApiToken(TOKEN_WRITE_ONLY)
+                    .withBaseUrl(url)
+                    .withApiToken(writeOnlyToken)
                     .provideFeedback(new UnitTestFeedback())
                     .withSender("init-test")
                     .build();
@@ -238,10 +263,11 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(13)
     public void testRetrieveVersionsEmpty() throws Exception {
         ServiceClient client = ServiceClientBuilder
-                .withBaseUrl("https://artifactor-uat.iktech.io")
-                .withApiToken(TOKEN_READ_ONLY)
+                .withBaseUrl(url)
+                .withApiToken(readOnlyToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -254,10 +280,11 @@ public class ServiceClientTest {
     }
 
     @Test
+    @Order(14)
     public void testRetrieveVersionEmpty() throws Exception {
         ServiceClient client = ServiceClientBuilder
-                .withBaseUrl("https://artifactor-uat.iktech.io")
-                .withApiToken(TOKEN_READ_ONLY)
+                .withBaseUrl(url)
+                .withApiToken(readOnlyToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
