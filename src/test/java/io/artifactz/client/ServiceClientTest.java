@@ -17,7 +17,7 @@ public class ServiceClientTest {
     public static void prepare() {
         url = System.getProperty("serviceUrl");
         if (url == null) {
-            url = "https://artifactor-uat.iktech.io";
+            url = "https://artifactor.uat.artifactz.io";
         }
         readWriteToken = System.getProperty("readWriteToken");
         readOnlyToken = System.getProperty("readOnlyToken");

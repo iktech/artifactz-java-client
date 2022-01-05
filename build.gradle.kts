@@ -1,7 +1,7 @@
 val compatibility: String? by project
 val ossUsername: String? by project
 val ossPassword: String? by project
-val tagName = System.getenv("RELEASE_TAG")
+val tagName: String? = System.getenv("RELEASE_TAG")
 group = "io.iktech"
 version = tagName ?: "1.1-SNAPSHOT"
 
@@ -11,7 +11,7 @@ plugins {
     id("maven-publish")
     id("jacoco")
     id("signing")
-    id("org.owasp.dependencycheck") version "6.1.1"
+    id("org.owasp.dependencycheck") version "6.5.1"
 }
 
 java {
@@ -22,12 +22,12 @@ java {
 }
 
 jacoco {
-    toolVersion = "0.8.6"
+    toolVersion = "0.8.7"
 }
 
 tasks.jacocoTestReport {
     reports {
-        xml.isEnabled = true
+        xml.required.set(true)
     }
 }
 
@@ -89,18 +89,17 @@ signing {
 }
 
 repositories {
-    // Use JCenter for resolving dependencies.
-    jcenter()
     mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
     api("org.apache.httpcomponents:httpclient:4.5.13")
     api("commons-lang:commons-lang:2.6")
-    api("com.fasterxml.jackson.core:jackson-annotations:2.12.1")
-    api("com.fasterxml.jackson.core:jackson-databind:2.12.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
-    testImplementation("com.jayway.jsonpath:json-path:2.4.0")
+    api("com.fasterxml.jackson.core:jackson-annotations:2.13.1")
+    api("com.fasterxml.jackson.core:jackson-databind:2.13.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
+    testImplementation("com.jayway.jsonpath:json-path:2.6.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
