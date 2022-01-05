@@ -11,7 +11,7 @@ plugins {
     id("maven-publish")
     id("jacoco")
     id("signing")
-    id("org.owasp.dependencycheck") version "6.5.1"
+    id("org.owasp.dependencycheck") version "6.5.2"
 }
 
 java {
