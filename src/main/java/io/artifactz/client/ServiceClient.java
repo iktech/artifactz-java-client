@@ -433,6 +433,10 @@ public class ServiceClient {
             throw new ClientException("Unauthorized");
         }
 
+        if (response.getStatusLine().getStatusCode() == 403) {
+            throw new ClientException("Forbidden");
+        }
+
         String contentType = response.getEntity().getContentType().toString();
 
         if (StringUtils.equals(contentType, ContentType.APPLICATION_JSON.getMimeType())) {

@@ -11,7 +11,7 @@ plugins {
     id("maven-publish")
     id("jacoco")
     id("signing")
-    id("org.owasp.dependencycheck") version "6.5.2"
+    id("org.owasp.dependencycheck") version "8.2.1"
 }
 
 java {
@@ -22,7 +22,7 @@ java {
 }
 
 jacoco {
-    toolVersion = "0.8.7"
+    toolVersion = "0.8.8"
 }
 
 tasks.jacocoTestReport {
@@ -94,12 +94,13 @@ repositories {
 }
 
 dependencies {
-    api("org.apache.httpcomponents:httpclient:4.5.13")
+    api("org.apache.httpcomponents:httpclient:4.5.14")
     api("commons-lang:commons-lang:2.6")
-    api("com.fasterxml.jackson.core:jackson-annotations:2.13.1")
-    api("com.fasterxml.jackson.core:jackson-databind:2.13.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-    testImplementation("com.jayway.jsonpath:json-path:2.6.0")
+    api("com.fasterxml.jackson.core:jackson-annotations:2.15.0")
+    api("com.fasterxml.jackson.core:jackson-databind:2.15.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.3")
+    testImplementation("com.jayway.jsonpath:json-path:2.8.0")
+    testImplementation("org.slf4j:slf4j-api:2.0.7")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 

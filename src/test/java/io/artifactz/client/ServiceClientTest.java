@@ -68,7 +68,7 @@ public class ServiceClientTest {
             fail();
         } catch (ClientException e) {
             assertEquals("Failed to send artifact details to the Artifactor Server", e.getMessage());
-            assertEquals("Unauthorized", e.getCause().getMessage());
+            assertEquals("Forbidden", e.getCause().getMessage());
         }
     }
 
@@ -120,7 +120,7 @@ public class ServiceClientTest {
             fail();
         } catch (ClientException e) {
             assertEquals("Failed to push artifact version", e.getMessage());
-            assertEquals("Unauthorized", e.getCause().getMessage());
+            assertEquals("Forbidden", e.getCause().getMessage());
         }
     }
 
@@ -258,7 +258,7 @@ public class ServiceClientTest {
             fail();
         } catch (ClientException e) {
             assertEquals("Failed to get data from the Artifactor Server", e.getMessage());
-            assertEquals("Unauthorized", e.getCause().getMessage());
+            assertEquals("Forbidden", e.getCause().getMessage());
         }
     }
 
