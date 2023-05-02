@@ -5,23 +5,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.artifactz.client.exception.ClientException;
 import io.artifactz.client.model.*;
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpHost;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.apache.http.util.VersionInfo;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.util.VersionInfo;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -142,7 +142,7 @@ public class ServiceClient {
         CloseableHttpResponse response = null;
         try {
             response = client.execute(getVersion);
-            if (response.getStatusLine().getStatusCode() != 200) {
+            if (response.getCode() != 200) {
                 this.handleError(response);
             } else {
                 return objectMapper.readValue(EntityUtils.toString(response.getEntity()), Stage.class);
@@ -222,7 +222,7 @@ public class ServiceClient {
         CloseableHttpResponse response = null;
         try {
             response = client.execute(publishRequest);
-            if (response.getStatusLine().getStatusCode() != 202) {
+            if (response.getCode() != 202) {
                 this.handleError(response);
             } else {
                 this.sendMessage(INFO, "Successfully patched artifact version");
@@ -301,7 +301,7 @@ public class ServiceClient {
 
         try {
             response = client.execute(pushRequest);
-            if (response.getStatusLine().getStatusCode() != 200) {
+            if (response.getCode() != 200) {
                 this.handleError(response);
             } else {
                 this.sendMessage(INFO, "Successfully pushed artifact version");
@@ -353,7 +353,7 @@ public class ServiceClient {
 
         try {
             response = client.execute(validateConnection);
-            if (response.getStatusLine().getStatusCode() != 200) {
+            if (response.getCode() != 200) {
                 this.handleError(response);
             } else {
                 this.sendMessage(INFO, "Successfully validated connection");
@@ -374,7 +374,7 @@ public class ServiceClient {
 
     }
 
-    private void setRequestProxy(HttpRequestBase request) throws MalformedURLException  {
+    private void setRequestProxy(HttpUriRequestBase request) throws MalformedURLException  {
         String proxySchema;
         String proxyHost;
         int proxyPort;
@@ -390,12 +390,12 @@ public class ServiceClient {
             if (proxyPort == -1) {
                 proxyPort = proxyUri.getDefaultPort();
             }
-            proxyHttpHost = new HttpHost(proxyHost, proxyPort, proxySchema);
+            proxyHttpHost = new HttpHost(proxySchema, proxyHost, proxyPort);
 
             if (!StringUtils.isEmpty(this.proxyUsername) && !StringUtils.isEmpty(this.proxyPassword)) {
-                org.apache.http.client.CredentialsProvider credsProvider = new BasicCredentialsProvider();
+                BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
                 credsProvider.setCredentials(new AuthScope(proxyHttpHost),
-                        new UsernamePasswordCredentials(this.proxyUsername, this.proxyPassword));
+                        new UsernamePasswordCredentials(this.proxyUsername, this.proxyPassword.toCharArray()));
                 clientbuilder.setDefaultCredentialsProvider(credsProvider);
             }
         }
@@ -414,7 +414,7 @@ public class ServiceClient {
         }
     }
 
-    private void prepareRequest(HttpEntityEnclosingRequest request, Request data) throws JsonProcessingException{
+    private void prepareRequest(HttpUriRequestBase request, Request data) throws JsonProcessingException{
         String content = objectMapper.writeValueAsString(data);
         StringEntity entity = new StringEntity(content, ContentType.APPLICATION_JSON);
         request.setEntity(entity);
@@ -429,11 +429,11 @@ public class ServiceClient {
     }
 
     private void handleError(CloseableHttpResponse response) throws IOException, ClientException {
-        if (response.getStatusLine().getStatusCode() == 401) {
+        if (response.getCode() == 401) {
             throw new ClientException("Unauthorized");
         }
 
-        if (response.getStatusLine().getStatusCode() == 403) {
+        if (response.getCode() == 403) {
             throw new ClientException("Forbidden");
         }
 

@@ -94,7 +94,7 @@ repositories {
 }
 
 dependencies {
-    api("org.apache.httpcomponents:httpclient:4.5.14")
+    api("org.apache.httpcomponents.client5:httpclient5:5.2.1")
     api("commons-lang:commons-lang:2.6")
     api("com.fasterxml.jackson.core:jackson-annotations:2.15.0")
     api("com.fasterxml.jackson.core:jackson-databind:2.15.0")
