@@ -6,19 +6,20 @@ import io.artifactz.client.exception.ClientException;
 import io.artifactz.client.model.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hc.client5.http.auth.AuthScope;
-import org.apache.hc.client5.http.auth.CredentialsProvider;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
-import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.routing.DefaultProxyRoutePlanner;
+import org.apache.hc.client5.http.routing.HttpRoutePlanner;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.util.VersionInfo;
@@ -96,7 +97,7 @@ public class ServiceClient {
      *
      * @return object containing the details of the found artifacts
      *
-     * @throws ClientException in case of the any failure to get artifact details
+     * @throws ClientException in case of any failure to get artifact details
      */
     public Stage retrieveJavaVersions(String stage, String ...javaArtifacts) throws ClientException {
         return retrieveVersions(stage, null, javaArtifacts);
@@ -127,12 +128,6 @@ public class ServiceClient {
 
         String artifactsQuery = Stream.concat(Arrays.stream(artifacts).map(a -> "artifact=" + a), Arrays.stream(javaArtifacts).map(a -> "java_artifact=" + a)).collect(Collectors.joining("&"));
         HttpGet getVersion = new HttpGet(this.baseUrl + "/stages/" + stage.replace(" ", "%20") + "/list?" + artifactsQuery);
-
-        try {
-            this.setRequestProxy(getVersion);
-        } catch (MalformedURLException e) {
-            throw new ClientException("Incorrect proxy URL specified: " + this.proxyUrl);
-        }
 
         getVersion.setHeader("Accepts", ContentType.APPLICATION_JSON.getMimeType());
         getVersion.setHeader("Authorization", "Bearer " + this.apiToken);
@@ -208,12 +203,6 @@ public class ServiceClient {
         HttpPut publishRequest = new HttpPut(this.baseUrl + "/artifacts/versions");
 
         try {
-            this.setRequestProxy(publishRequest);
-        } catch (MalformedURLException e) {
-            throw new ClientException("Incorrect proxy URL specified: " + this.proxyUrl);
-        }
-
-        try {
             this.prepareRequest(publishRequest, request);
         } catch (JsonProcessingException e) {
             throw new ClientException("Cannot create request", e);
@@ -285,11 +274,6 @@ public class ServiceClient {
         CloseableHttpClient client = this.getHttpClient();
 
         HttpPut pushRequest = new HttpPut(this.baseUrl + "/artifacts/push");
-        try {
-            this.setRequestProxy(pushRequest);
-        } catch (MalformedURLException e) {
-            throw new ClientException("Incorrect proxy URL specified: " + this.proxyUrl);
-        }
 
         try {
             this.prepareRequest(pushRequest, request);
@@ -337,12 +321,6 @@ public class ServiceClient {
         CloseableHttpClient client = this.getHttpClient();
         HttpGet validateConnection = new HttpGet(this.baseUrl + "/validate");
 
-        try {
-            this.setRequestProxy(validateConnection);
-        } catch (MalformedURLException e) {
-            throw new ClientException("Incorrect proxy URL specified: " + this.proxyUrl);
-        }
-
         validateConnection.setHeader("Accepts", ContentType.APPLICATION_JSON.getMimeType());
         validateConnection.setHeader("Authorization", "Bearer " + this.apiToken);
         if (this.sender != null) {
@@ -374,40 +352,6 @@ public class ServiceClient {
 
     }
 
-    private void setRequestProxy(HttpUriRequestBase request) throws MalformedURLException  {
-        String proxySchema;
-        String proxyHost;
-        int proxyPort;
-        HttpHost proxyHttpHost = null;
-
-        HttpClientBuilder clientbuilder = HttpClients.custom();
-
-        if (!StringUtils.isEmpty(this.proxyUrl)) {
-            URL proxyUri = new URL(this.proxyUrl);
-            proxySchema = proxyUri.getProtocol();
-            proxyHost = proxyUri.getHost();
-            proxyPort = proxyUri.getPort();
-            if (proxyPort == -1) {
-                proxyPort = proxyUri.getDefaultPort();
-            }
-            proxyHttpHost = new HttpHost(proxySchema, proxyHost, proxyPort);
-
-            if (!StringUtils.isEmpty(this.proxyUsername) && !StringUtils.isEmpty(this.proxyPassword)) {
-                BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-                credsProvider.setCredentials(new AuthScope(proxyHttpHost),
-                        new UsernamePasswordCredentials(this.proxyUsername, this.proxyPassword.toCharArray()));
-                clientbuilder.setDefaultCredentialsProvider(credsProvider);
-            }
-        }
-
-        if (proxyHttpHost != null) {
-            RequestConfig.Builder reqconfigconbuilder = RequestConfig.custom();
-            reqconfigconbuilder = reqconfigconbuilder.setProxy(proxyHttpHost);
-            RequestConfig config = reqconfigconbuilder.build();
-            request.setConfig(config);
-        }
-    }
-
     private void sendMessage(FeedbackLevel level, String message) {
         if (this.feedback != null) {
             this.feedback.send(level, message);
@@ -437,18 +381,56 @@ public class ServiceClient {
             throw new ClientException("Forbidden");
         }
 
-        String contentType = response.getEntity().getContentType().toString();
+        String contentType = response.getEntity().getContentType();
 
         if (StringUtils.equals(contentType, ContentType.APPLICATION_JSON.getMimeType())) {
-            ErrorMessage message = objectMapper.readValue(EntityUtils.toString(response.getEntity()), ErrorMessage.class);
-            throw new ClientException(message.getError());
+            try {
+                ErrorMessage message = objectMapper.readValue(EntityUtils.toString(response.getEntity()), ErrorMessage.class);
+                throw new ClientException(message.getError());
+            } catch (ParseException e) {
+                throw new ClientException("Cannot parse response object");
+            }
         } else {
             throw new ClientException("Unknown error");
         }
     }
 
-    private CloseableHttpClient getHttpClient() {
-        return HttpClients.custom().setUserAgent((this.userAgent != null ? this.userAgent + " " : "") + USER_AGENT + " " + VersionInfo.getUserAgent("Apache-HttpClient",
-                "org.apache.http.client", getClass())).build();
+    private CloseableHttpClient getHttpClient() throws ClientException {
+        String proxySchema;
+        String proxyHost;
+        int proxyPort;
+        HttpHost proxyHttpHost = null;
+
+        HttpClientBuilder clientbuilder = HttpClients.custom();
+
+        if (!StringUtils.isEmpty(this.proxyUrl)) {
+            try {
+                URL proxyUri = new URL(this.proxyUrl);
+                proxySchema = proxyUri.getProtocol();
+                proxyHost = proxyUri.getHost();
+                proxyPort = proxyUri.getPort();
+                if (proxyPort == -1) {
+                    proxyPort = proxyUri.getDefaultPort();
+                }
+                proxyHttpHost = new HttpHost(proxySchema, proxyHost, proxyPort);
+
+                if (!StringUtils.isEmpty(this.proxyUsername) && !StringUtils.isEmpty(this.proxyPassword)) {
+                    BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
+                    credsProvider.setCredentials(new AuthScope(proxyHttpHost),
+                            new UsernamePasswordCredentials(this.proxyUsername, this.proxyPassword.toCharArray()));
+                    clientbuilder.setDefaultCredentialsProvider(credsProvider);
+                }
+
+                HttpRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxyHttpHost);
+                clientbuilder.setRoutePlanner(routePlanner);
+            } catch (MalformedURLException e) {
+                throw new ClientException("Proxy URL is malformed: " + this.proxyUrl);
+            }
+        }
+
+        clientbuilder.setUserAgent((this.userAgent != null ? this.userAgent + " " : "") + USER_AGENT + " " + VersionInfo.getSoftwareInfo("Apache-HttpClient",
+                "org.apache.http.client", getClass()));
+
+        return clientbuilder.build();
     }
 }
