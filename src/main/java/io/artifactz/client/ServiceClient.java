@@ -64,6 +64,7 @@ public class ServiceClient {
      * @param proxyPassword proxy password
      * @param userAgent user agent
      * @param feedback feedback interface implementation
+     * @param objectMapper jackson object mapper implementation
      */
     public ServiceClient(String baseUrl, String apiToken, String sender, String proxyUrl, String proxyUsername, String proxyPassword, String userAgent, Feedback feedback, ObjectMapper objectMapper) {
         this.baseUrl = baseUrl;

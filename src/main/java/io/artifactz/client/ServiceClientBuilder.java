@@ -66,21 +66,21 @@ public class ServiceClientBuilder {
 
     private ObjectMapper objectMapper;
 
-    public ServiceClientBuilder() {
-        this.baseUrl = "https://artifactor.artifactz.io";
-    }
-
+    /**
+     * Constructs ServiceClientBuilder with the default base Url and externally provided api token
+     *
+     * @param apiToken service API token
+     */
     public ServiceClientBuilder(String apiToken) {
-        this();
+        this.baseUrl = "https://artifactor.artifactz.io";
         this.apiToken = apiToken;
     }
 
     /**
-     * Constructs ServiceClientBuilder with the base Url
+     * Constructs ServiceClientBuilder with the base Url and api token
      *
      * @param baseUrl service base url
-     *
-     * @return builder object for further configuration
+     * @param apiToken service API token
      */
     public ServiceClientBuilder(String baseUrl, String apiToken) {
         this.baseUrl = baseUrl;
