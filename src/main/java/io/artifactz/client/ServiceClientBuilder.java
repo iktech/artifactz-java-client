@@ -1,5 +1,6 @@
 package io.artifactz.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.artifactz.client.exception.ClientException;
 
 /**
@@ -8,18 +9,14 @@ import io.artifactz.client.exception.ClientException;
  *
  * <pre>
  *     {@code
-        ServiceClient client = ServiceClientBuilder
-            .create()
-            .withApiToken("2cf2363e-4551-43ec-abfd-facfffb17493")
+        ServiceClient client = new ServiceClientBuilder("2cf2363e-4551-43ec-abfd-facfffb17493")
             .build();
  *     }
  * </pre>
  * Or if the client is used against the non production environment:
  * <pre>
  *     {@code
-        ServiceClient client = ServiceClientBuilder
-            .withBaseUrl("https://artifactz-uat.iktech.io")
-            .withApiToken("2cf2363e-4551-43ec-abfd-facfffb17493")
+        ServiceClient client = new ServiceClientBuilder("https://artifactz-uat.iktech.io", "2cf2363e-4551-43ec-abfd-facfffb17493")
             .build();
  *     }
  * </pre>
@@ -67,40 +64,27 @@ public class ServiceClientBuilder {
      */
     private Feedback feedback;
 
+    private ObjectMapper objectMapper;
+
     /**
-     * Constructs ServiceClientBuilder with the base Url
+     * Constructs ServiceClientBuilder with the default base Url and externally provided api token
+     *
+     * @param apiToken service API token
+     */
+    public ServiceClientBuilder(String apiToken) {
+        this.baseUrl = "https://artifactor.artifactz.io";
+        this.apiToken = apiToken;
+    }
+
+    /**
+     * Constructs ServiceClientBuilder with the base Url and api token
      *
      * @param baseUrl service base url
-     *
-     * @return builder object for further configuration
+     * @param apiToken service API token
      */
-    public static ServiceClientBuilder withBaseUrl(String baseUrl) {
-        ServiceClientBuilder builder = new ServiceClientBuilder();
-        builder.baseUrl = baseUrl;
-        return builder;
-    }
-
-    /**
-     * Constructs ServiceClientBuilder pointing to the production instance
-     *
-     * @return builder object for further configuration
-     */
-    public static ServiceClientBuilder create() {
-        ServiceClientBuilder builder = new ServiceClientBuilder();
-        builder.baseUrl = "https://artifactor.artifactz.io";
-        return builder;
-    }
-
-    /**
-     * Adds the client Api token to configuration
-     *
-     * @param apiToken Api token to use
-     *
-     * @return configured builder object
-     */
-    public ServiceClientBuilder withApiToken(String apiToken) {
+    public ServiceClientBuilder(String baseUrl, String apiToken) {
+        this.baseUrl = baseUrl;
         this.apiToken = apiToken;
-        return this;
     }
 
     /**
@@ -191,6 +175,6 @@ public class ServiceClientBuilder {
             throw new ClientException("API Token is required");
         }
 
-        return new ServiceClient(this.baseUrl, this.apiToken, this.sender, this.proxyUrl, this.proxyUsername, this.proxyPassword, this.userAgent, this.feedback);
+        return new ServiceClient(this.baseUrl, this.apiToken, this.sender, this.proxyUrl, this.proxyUsername, this.proxyPassword, this.userAgent, this.feedback, new ObjectMapper());
     }
 }

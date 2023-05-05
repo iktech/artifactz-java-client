@@ -30,4 +30,15 @@ public class ClientException extends Exception {
     public ClientException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    @Override
+    public String getMessage() {
+        StringBuilder combinedMessage = new StringBuilder(super.getMessage());
+
+        if (super.getCause() != null && super.getCause().getMessage() != null && !super.getCause().getMessage().trim().equals("")) {
+            combinedMessage.append(": ").append(super.getCause().getMessage().trim());
+        }
+
+        return combinedMessage.toString();
+    }
 }
