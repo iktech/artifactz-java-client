@@ -40,7 +40,6 @@ import static io.artifactz.client.FeedbackLevel.INFO;
  *   - retrieve versions of the artifacts at a specific stage from the service
  */
 public class ServiceClient {
-    private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final String USER_AGENT = "Artifactz.io-client-library/1.1";
 
     final String baseUrl;
@@ -51,6 +50,8 @@ public class ServiceClient {
     final String proxyPassword;
     final String userAgent;
     final Feedback feedback;
+
+    private final ObjectMapper objectMapper;
 
     /**
      * Service client constructor
@@ -64,7 +65,7 @@ public class ServiceClient {
      * @param userAgent user agent
      * @param feedback feedback interface implementation
      */
-    public ServiceClient(String baseUrl, String apiToken, String sender, String proxyUrl, String proxyUsername, String proxyPassword, String userAgent, Feedback feedback) {
+    public ServiceClient(String baseUrl, String apiToken, String sender, String proxyUrl, String proxyUsername, String proxyPassword, String userAgent, Feedback feedback, ObjectMapper objectMapper) {
         this.baseUrl = baseUrl;
         this.apiToken = apiToken;
         this.sender = sender;
@@ -73,6 +74,7 @@ public class ServiceClient {
         this.proxyPassword = proxyPassword;
         this.userAgent = userAgent;
         this.feedback = feedback;
+        this.objectMapper = objectMapper;
     }
 
     /**

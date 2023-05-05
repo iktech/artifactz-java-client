@@ -27,9 +27,7 @@ public class ServiceClientTest {
     @Test
     @Order(1)
     public void testPublishArtifact() throws ClientException {
-        ServiceClient client = ServiceClientBuilder
-                .withBaseUrl(url)
-                .withApiToken(readWriteToken)
+        ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -49,9 +47,7 @@ public class ServiceClientTest {
     @Order(2)
     public void testArtifactIncorrectToken() {
         try {
-            ServiceClient client = ServiceClientBuilder
-                    .withBaseUrl(url)
-                    .withApiToken(readOnlyToken)
+            ServiceClient client = new ServiceClientBuilder(url, readOnlyToken)
                     .provideFeedback(new UnitTestFeedback())
                     .withSender("init-test")
                     .build();
@@ -75,9 +71,7 @@ public class ServiceClientTest {
     @Test
     @Order(3)
     public void testPushArtifactWithVersion() throws ClientException {
-        ServiceClient client = ServiceClientBuilder
-                .withBaseUrl(url)
-                .withApiToken(readWriteToken)
+        ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -90,9 +84,7 @@ public class ServiceClientTest {
     @Test
     @Order(4)
     public void testPushArtifact() throws ClientException {
-        ServiceClient client = ServiceClientBuilder
-                .withBaseUrl(url)
-                .withApiToken(readWriteToken)
+        ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .withUserAgent("JUnit 5")
@@ -107,9 +99,7 @@ public class ServiceClientTest {
     @Order(5)
     public void testPushArtifactIncorrectToken() {
         try {
-            ServiceClient client = ServiceClientBuilder
-                    .withBaseUrl(url)
-                    .withApiToken(readOnlyToken)
+            ServiceClient client = new ServiceClientBuilder(url, readOnlyToken)
                     .provideFeedback(new UnitTestFeedback())
                     .withSender("init-test")
                     .build();
@@ -127,9 +117,7 @@ public class ServiceClientTest {
     @Test
     @Order(6)
     public void testRetrieveVersions() throws ClientException {
-        ServiceClient client = ServiceClientBuilder
-                .withBaseUrl(url)
-                .withApiToken(readWriteToken)
+        ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -149,9 +137,7 @@ public class ServiceClientTest {
     @Test
     @Order(7)
     public void testRetrieveVersion() throws ClientException {
-        ServiceClient client = ServiceClientBuilder
-                .withBaseUrl(url)
-                .withApiToken(readWriteToken)
+        ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -171,9 +157,7 @@ public class ServiceClientTest {
     @Test
     @Order(8)
     public void testRetrieveVersionsJava() throws ClientException {
-        ServiceClient client = ServiceClientBuilder
-                .withBaseUrl(url)
-                .withApiToken(readWriteToken)
+        ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -193,9 +177,7 @@ public class ServiceClientTest {
     @Test
     @Order(9)
     public void testValidateConnection() throws ClientException {
-        ServiceClient client = ServiceClientBuilder
-                .withBaseUrl(url)
-                .withApiToken(readWriteToken)
+        ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -207,9 +189,7 @@ public class ServiceClientTest {
     @Order(10)
     public void testValidateConnectionInvalid() {
         try {
-            ServiceClient client = ServiceClientBuilder
-                    .withBaseUrl("https://iktech.io")
-                    .withApiToken(readWriteToken)
+            ServiceClient client = new ServiceClientBuilder("https://iktech.io", readWriteToken)
                     .provideFeedback(new UnitTestFeedback())
                     .withSender("init-test")
                     .build();
@@ -224,9 +204,7 @@ public class ServiceClientTest {
     @Test
     @Order(11)
     public void testRetrieveVersionJava() throws ClientException {
-        ServiceClient client = ServiceClientBuilder
-                .withBaseUrl(url)
-                .withApiToken(readWriteToken)
+        ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -247,9 +225,7 @@ public class ServiceClientTest {
     @Order(12)
     public void testRetrieveVersionsIncorrectToken() {
         try {
-            ServiceClient client = ServiceClientBuilder
-                    .withBaseUrl(url)
-                    .withApiToken(writeOnlyToken)
+            ServiceClient client = new ServiceClientBuilder(url, writeOnlyToken)
                     .provideFeedback(new UnitTestFeedback())
                     .withSender("init-test")
                     .build();
@@ -265,9 +241,7 @@ public class ServiceClientTest {
     @Test
     @Order(13)
     public void testRetrieveVersionsEmpty() throws Exception {
-        ServiceClient client = ServiceClientBuilder
-                .withBaseUrl(url)
-                .withApiToken(readOnlyToken)
+        ServiceClient client = new ServiceClientBuilder(url, readOnlyToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();
@@ -282,9 +256,7 @@ public class ServiceClientTest {
     @Test
     @Order(14)
     public void testRetrieveVersionEmpty() throws Exception {
-        ServiceClient client = ServiceClientBuilder
-                .withBaseUrl(url)
-                .withApiToken(readOnlyToken)
+        ServiceClient client = new ServiceClientBuilder(url, readOnlyToken)
                 .provideFeedback(new UnitTestFeedback())
                 .withSender("init-test")
                 .build();

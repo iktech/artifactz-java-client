@@ -9,9 +9,7 @@ public class ServiceClientBuilderTest {
     @Test
     public void testClientBuilder() throws Exception {
         Feedback feedback = new FeedbackImpl();
-        ServiceClient client = ServiceClientBuilder
-                .withBaseUrl("https://artifactz-uat.iktech.io")
-                .withApiToken("2cf2363e-4551-43ec-abfd-facfffb17493")
+        ServiceClient client = new ServiceClientBuilder("https://artifactz-uat.iktech.io", "2cf2363e-4551-43ec-abfd-facfffb17493")
                 .withSender("unit-test")
                 .withProxyUrl("http://proxy.iktech.io:3128")
                 .withProxyUsername("test")
@@ -31,9 +29,7 @@ public class ServiceClientBuilderTest {
     @Test
     public void testClientBuilderProduction() throws Exception {
         Feedback feedback = new FeedbackImpl();
-        ServiceClient client = ServiceClientBuilder
-                .create()
-                .withApiToken("2cf2363e-4551-43ec-abfd-facfffb17493")
+        ServiceClient client = new ServiceClientBuilder("2cf2363e-4551-43ec-abfd-facfffb17493")
                 .withSender("unit-test")
                 .provideFeedback(feedback).build();
         assertNotNull(client);
@@ -50,8 +46,8 @@ public class ServiceClientBuilderTest {
     @Test
     public void testClientBuilderWithNoUrl() {
         try {
-            ServiceClientBuilder
-                    .withBaseUrl(null).build();
+            new ServiceClientBuilder(null, null)
+                    .build();
             fail();
         } catch (ClientException e) {
             assertEquals("Service Base URL is required", e.getMessage());
@@ -61,8 +57,7 @@ public class ServiceClientBuilderTest {
     @Test
     public void testClientBuilderWithNoApiToken() {
         try {
-            ServiceClientBuilder
-                    .withBaseUrl("https://artifactz-uat.iktech.io")
+            new ServiceClientBuilder("https://artifactz-uat.iktech.io", null)
                     .build();
             fail();
         } catch (ClientException e) {
