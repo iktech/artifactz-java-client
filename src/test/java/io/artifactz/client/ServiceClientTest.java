@@ -63,7 +63,7 @@ public class ServiceClientTest {
                     "1.0.0");
             fail();
         } catch (ClientException e) {
-            assertEquals("Failed to send artifact details to the Artifactor Server", e.getMessage());
+            assertEquals("Failed to send artifact details to the Artifactor Server: Forbidden", e.getMessage());
             assertEquals("Forbidden", e.getCause().getMessage());
         }
     }
@@ -109,7 +109,7 @@ public class ServiceClientTest {
                     "1.0.0");
             fail();
         } catch (ClientException e) {
-            assertEquals("Failed to push artifact version", e.getMessage());
+            assertEquals("Failed to push artifact version: Forbidden", e.getMessage());
             assertEquals("Forbidden", e.getCause().getMessage());
         }
     }
@@ -197,7 +197,7 @@ public class ServiceClientTest {
             client.validateConnection();
             fail();
         } catch (ClientException e) {
-            assertEquals("Failed to validate connection to the Artifactor instance @https://iktech.io", e.getMessage());
+            assertEquals("Failed to validate connection to the Artifactor instance @https://iktech.io: Unknown error", e.getMessage());
         }
     }
 
@@ -233,7 +233,7 @@ public class ServiceClientTest {
             client.retrieveVersions("Development", "test-data", "test-api");
             fail();
         } catch (ClientException e) {
-            assertEquals("Failed to get data from the Artifactor Server", e.getMessage());
+            assertEquals("Failed to get data from the Artifactor Server: Forbidden", e.getMessage());
             assertEquals("Forbidden", e.getCause().getMessage());
         }
     }
