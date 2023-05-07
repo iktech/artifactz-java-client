@@ -3,7 +3,7 @@ val ossUsername: String? by project
 val ossPassword: String? by project
 val tagName: String? = System.getenv("RELEASE_TAG")
 group = "io.iktech"
-version = tagName ?: "1.1-SNAPSHOT"
+version = tagName ?: "1.2-SNAPSHOT"
 
 plugins {
     // Apply the java-library plugin for API and implementation separation.
