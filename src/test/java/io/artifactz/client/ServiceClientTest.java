@@ -26,6 +26,29 @@ public class ServiceClientTest {
 
     @Test
     @Order(1)
+    public void testPublishArtifactFailure() throws ClientException {
+        try {
+            ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
+                    .provideFeedback(new UnitTestFeedback())
+                    .withSender("init-test")
+                    .build();
+
+            client.publishArtifact("Development",
+                    "Development Stage",
+                    "test-data",
+                    "Test Data Library",
+                    "Test",
+                    "JAR",
+                    null, null,
+                    "1.0.0");
+        } catch (ClientException e) {
+            assertEquals("Failed to send artifact details to the Artifactor Server: group_id cannot be empty for the Java Artifact", e.getMessage());
+            assertEquals("group_id cannot be empty for the Java Artifact", e.getCause().getMessage());
+        }
+    }
+
+    @Test
+    @Order(2)
     public void testPublishArtifact() throws ClientException {
         ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
@@ -44,7 +67,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(2)
+    @Order(3)
     public void testArtifactIncorrectToken() {
         try {
             ServiceClient client = new ServiceClientBuilder(url, readOnlyToken)
@@ -69,7 +92,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(3)
+    @Order(4)
     public void testPushArtifactWithVersion() throws ClientException {
         ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
@@ -82,7 +105,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void testPushArtifact() throws ClientException {
         ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
@@ -96,7 +119,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     public void testPushArtifactIncorrectToken() {
         try {
             ServiceClient client = new ServiceClientBuilder(url, readOnlyToken)
@@ -115,7 +138,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     public void testRetrieveVersions() throws ClientException {
         ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
@@ -135,7 +158,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     public void testRetrieveVersion() throws ClientException {
         ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
@@ -155,7 +178,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     public void testRetrieveVersionsJava() throws ClientException {
         ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
@@ -175,7 +198,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     public void testValidateConnection() throws ClientException {
         ServiceClient client = new ServiceClientBuilder(url, readWriteToken)
                 .provideFeedback(new UnitTestFeedback())
@@ -186,7 +209,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(10)
+    @Order(11)
     public void testValidateConnectionInvalid() {
         try {
             ServiceClient client = new ServiceClientBuilder("https://iktech.io", readWriteToken)
@@ -222,7 +245,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(12)
+    @Order(13)
     public void testRetrieveVersionsIncorrectToken() {
         try {
             ServiceClient client = new ServiceClientBuilder(url, writeOnlyToken)
@@ -239,7 +262,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(13)
+    @Order(14)
     public void testRetrieveVersionsEmpty() throws Exception {
         ServiceClient client = new ServiceClientBuilder(url, readOnlyToken)
                 .provideFeedback(new UnitTestFeedback())
@@ -254,7 +277,7 @@ public class ServiceClientTest {
     }
 
     @Test
-    @Order(14)
+    @Order(15)
     public void testRetrieveVersionEmpty() throws Exception {
         ServiceClient client = new ServiceClientBuilder(url, readOnlyToken)
                 .provideFeedback(new UnitTestFeedback())

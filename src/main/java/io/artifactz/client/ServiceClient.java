@@ -377,24 +377,33 @@ public class ServiceClient {
 
     private void handleError(CloseableHttpResponse response) throws IOException, ClientException {
         if (response.getCode() == 401) {
-            throw new ClientException("Unauthorized");
+            createClientException(response, "Unauthorized");
         }
 
         if (response.getCode() == 403) {
-            throw new ClientException("Forbidden");
+            createClientException(response, "Forbidden");
         }
 
-        String contentType = response.getEntity().getContentType();
+        this.createClientException(response);
+    }
 
+    private void createClientException(CloseableHttpResponse response) throws ClientException {
+        this.createClientException(response, null);
+    }
+
+    private void createClientException(CloseableHttpResponse response, String defaultMessage) throws ClientException {
+        String contentType = response.getEntity().getContentType();
         if (StringUtils.equals(contentType, ContentType.APPLICATION_JSON.getMimeType())) {
             try {
                 ErrorMessage message = objectMapper.readValue(EntityUtils.toString(response.getEntity()), ErrorMessage.class);
-                throw new ClientException(message.getError());
+                throw new ClientException(defaultMessage != null ? defaultMessage + ": " + message.getError() : message.getError());
             } catch (ParseException e) {
-                throw new ClientException("Cannot parse response object");
+                throw new ClientException(defaultMessage != null ? defaultMessage : "Cannot parse response object");
+            } catch (IOException e) {
+                throw new ClientException(defaultMessage != null ? defaultMessage : "Cannot read response object");
             }
         } else {
-            throw new ClientException("Unknown error");
+            throw new ClientException(defaultMessage != null ? defaultMessage : "Unknown error");
         }
     }
 
