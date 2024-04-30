@@ -94,13 +94,13 @@ repositories {
 }
 
 dependencies {
-    api("org.apache.httpcomponents.client5:httpclient5:5.2.1")
-    api("org.apache.commons:commons-lang3:3.13.0")
-    api("com.fasterxml.jackson.core:jackson-annotations:2.15.2")
-    api("com.fasterxml.jackson.core:jackson-databind:2.15.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
-    testImplementation("com.jayway.jsonpath:json-path:2.8.0")
-    testImplementation("org.slf4j:slf4j-api:2.0.9")
+    api("org.apache.httpcomponents.client5:httpclient5:5.3.1")
+    api("org.apache.commons:commons-lang3:3.14.0")
+    api("com.fasterxml.jackson.core:jackson-annotations:2.17.0")
+    api("com.fasterxml.jackson.core:jackson-databind:2.17.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testImplementation("com.jayway.jsonpath:json-path:2.9.0")
+    testImplementation("org.slf4j:slf4j-api:2.0.12")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 }
 
