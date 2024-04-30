@@ -38,7 +38,7 @@ jobs:
     - name: JaCoCo Test Report
       run: ./gradlew jacocoTestReport
     - name: SonarQube Scan
-      uses: monstar-lab-oss/sonarqube-github-action@v1.0.1
+      uses: monstar-lab-oss/sonarqube-github-action@v1.2.0
       with:
         url: ${{ secrets.SONARQUBE_HOST }}
         token: ${{ secrets.SONARQUBE_TOKEN }}
