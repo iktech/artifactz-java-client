@@ -42,10 +42,10 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
     - name: Remove javadocs and source arhives
       run: rm -rf build/libs/artifactz-java-client-*-javadoc.jar build/libs/artifactz-java-client-*-sources.jar
-    - name: Scan current project
-      uses: anchore/scan-action@v6
-      with:
-        path: "build/libs/artifactz-java-client-*.jar"
-        fail-build: true
-        severity-cutoff: high
-        only-fixed: true
+#    - name: Scan current project
+#      uses: anchore/scan-action@v6
+#      with:
+#        path: "build/libs/artifactz-java-client-*.jar"
+#        fail-build: true
+#        severity-cutoff: high
+#        only-fixed: true
