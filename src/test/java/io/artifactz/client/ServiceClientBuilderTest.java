@@ -33,7 +33,7 @@ public class ServiceClientBuilderTest {
                 .withSender("unit-test")
                 .provideFeedback(feedback).build();
         assertNotNull(client);
-        assertEquals("https://artifactor.artifactz.io", client.baseUrl);
+        assertEquals("https://api.artifactz.io", client.baseUrl);
         assertEquals("2cf2363e-4551-43ec-abfd-facfffb17493", client.apiToken);
         assertEquals("unit-test", client.sender);
         assertNull(client.proxyUrl);

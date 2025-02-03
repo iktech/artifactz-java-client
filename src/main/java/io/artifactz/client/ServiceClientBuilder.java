@@ -25,7 +25,7 @@ import io.artifactz.client.exception.ClientException;
  */
 public class ServiceClientBuilder {
     /**
-     * The artifactz.io service base Url. For production use it must be https://artifactor.artifactz.io
+     * The artifactz.io service base Url. For production use it must be https://api.artifactz.io
      */
     private String baseUrl;
 
@@ -72,7 +72,7 @@ public class ServiceClientBuilder {
      * @param apiToken service API token
      */
     public ServiceClientBuilder(String apiToken) {
-        this.baseUrl = "https://artifactor.artifactz.io";
+        this.baseUrl = "https://api.artifactz.io";
         this.apiToken = apiToken;
     }
 

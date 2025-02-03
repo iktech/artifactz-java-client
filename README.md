@@ -12,7 +12,7 @@ Create a client using the ServiceClientBuilder.
 BaseUrl and ApiToken are the mandatory client properties. The others are optional.
 ```java
             ServiceClient client = ServiceClientBuilder
-                    .withBaseUrl("https://artifactor.artifactz.io")
+                    .withBaseUrl("https://api.artifactz.io")
                     .withApiToken("<your access token here>")
                     .provideFeedback(new FeedbackImpl())
                     .withSender("sender")
@@ -23,15 +23,15 @@ BaseUrl and ApiToken are the mandatory client properties. The others are optiona
 **Service Client Properties**
 
 
-Name | Description |
----|---
-baseUrl | Service base url. In production it should always be https://artifactor.artifactz.io
-apiToken | API Token to access service with permissions to publish or read depending on the intended usage
-proxyUrl | the URL of the proxy service (optional)
-proxyUsername | proxy username if proxy is used and it requires authentication (optional)
-proxyPassword | proxy password (optional)
-sender | Sender identifier, recorded by the service along with the version (optional)
-feedback | the customer implementation of the Feedback interface to report the progress and/or client errors
+| Name           | Description                                                                                       |
+|----------------|---------------------------------------------------------------------------------------------------|
+| baseUrl        | Service base url. In production it should always be https://api.artifactz.io                      |
+| apiToken       | API Token to access service with permissions to publish or read depending on the intended usage   |
+| proxyUrl       | the URL of the proxy service (optional)                                                           |
+| proxyUsername  | proxy username if proxy is used and it requires authentication (optional)                         |                         
+| proxyPassword  | proxy password (optional)                                                                         |                       
+| sender         | Sender identifier, recorded by the service along with the version (optional)                      |                     
+| feedback       | the customer implementation of the Feedback interface to report the progress and/or client errors | 
 
 To publish artifact details:
 
@@ -66,4 +66,4 @@ See [LICENSE](LICENSE).
 
 ## Copyright
 
-Copyright (c) 2020 - 2021 IKtech Limited
+Copyright (c) 2020 - 2025 IKtech Limited

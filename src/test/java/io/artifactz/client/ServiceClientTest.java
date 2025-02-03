@@ -17,7 +17,7 @@ public class ServiceClientTest {
     public static void prepare() {
         url = System.getProperty("serviceUrl");
         if (url == null) {
-            url = "https://artifactor.uat.artifactz.io";
+            url = "https://api.uat.artifactz.io";
         }
         readWriteToken = System.getProperty("readWriteToken");
         readOnlyToken = System.getProperty("readOnlyToken");
@@ -86,8 +86,8 @@ public class ServiceClientTest {
                     "1.0.0");
             fail();
         } catch (ClientException e) {
-            assertEquals("Failed to send artifact details to the Artifactor Server: Forbidden", e.getMessage());
-            assertEquals("Forbidden", e.getCause().getMessage());
+            assertEquals("Failed to send artifact details to the Artifactor Server: Forbidden: insufficient scope", e.getMessage());
+            assertEquals("Forbidden: insufficient scope", e.getCause().getMessage());
         }
     }
 
@@ -132,8 +132,8 @@ public class ServiceClientTest {
                     "1.0.0");
             fail();
         } catch (ClientException e) {
-            assertEquals("Failed to push artifact version: Forbidden", e.getMessage());
-            assertEquals("Forbidden", e.getCause().getMessage());
+            assertEquals("Failed to push artifact version: Forbidden: insufficient scope", e.getMessage());
+            assertEquals("Forbidden: insufficient scope", e.getCause().getMessage());
         }
     }
 
@@ -247,18 +247,15 @@ public class ServiceClientTest {
     @Test
     @Order(13)
     public void testRetrieveVersionsIncorrectToken() {
-        try {
+        ClientException e = assertThrows(ClientException.class, () -> {
             ServiceClient client = new ServiceClientBuilder(url, writeOnlyToken)
                     .provideFeedback(new UnitTestFeedback())
                     .withSender("init-test")
                     .build();
-
             client.retrieveVersions("Development", "test-data", "test-api");
-            fail();
-        } catch (ClientException e) {
-            assertEquals("Failed to get data from the Artifactor Server: Forbidden", e.getMessage());
-            assertEquals("Forbidden", e.getCause().getMessage());
-        }
+        });
+        assertEquals("Failed to get data from the Artifactor Server: Forbidden: insufficient scope", e.getMessage());
+        assertEquals("Forbidden: insufficient scope", e.getCause().getMessage());
     }
 
     @Test
@@ -273,7 +270,8 @@ public class ServiceClientTest {
 
         assertNotNull(stage);
         assertEquals("Automated Integration Tests", stage.getStage());
-        assertNull(stage.getArtifacts());
+        assertNotNull(stage.getArtifacts());
+        assertEquals(0, stage.getArtifacts().size());
     }
 
     @Test
@@ -288,6 +286,7 @@ public class ServiceClientTest {
 
         assertNotNull(stage);
         assertEquals("Automated Integration Tests", stage.getStage());
-        assertNull(stage.getArtifacts());
+        assertNotNull(stage.getArtifacts());
+        assertEquals(0, stage.getArtifacts().size());
     }
 }
