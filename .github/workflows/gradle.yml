@@ -43,7 +43,7 @@ jobs:
     - name: Scan current project
       uses: anchore/scan-action@v6
       with:
-        path: "build/libs/artifactz-java-client-*.jar"
+        path: "build/libs"
         fail-build: true
         severity-cutoff: high
         only-fixed: true
