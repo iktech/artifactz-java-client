@@ -40,7 +40,7 @@ import static io.artifactz.client.FeedbackLevel.INFO;
  *   - retrieve versions of the artifacts at a specific stage from the service
  */
 public class ServiceClient {
-    private static final String USER_AGENT = "Artifactz.io-client-library/1.1";
+    private static final String USER_AGENT = "Artifactz.io-client-library/1.3";
 
     final String baseUrl;
     final String apiToken;
