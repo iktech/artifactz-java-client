@@ -23,11 +23,14 @@ import org.apache.hc.core5.http.ParseException;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.util.VersionInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,6 +44,8 @@ import static io.artifactz.client.FeedbackLevel.INFO;
  */
 public class ServiceClient {
     private static final String USER_AGENT = "Artifactz.io-client-library/1.3";
+    private static final Logger logger = LoggerFactory.getLogger(ServiceClient.class);
+
 
     final String baseUrl;
     final String apiToken;
@@ -444,5 +449,46 @@ public class ServiceClient {
                 "org.apache.http.client", getClass()));
 
         return clientbuilder.build();
+    }
+
+    /**
+     * The tag() method returns a current version from the artifactz.io server that is registered against artifact at a specified stage.
+     * Method expects the environment variable ARTIFACTZ_TOKEN to be present in the environment which contains a valid artifactz.io
+     * API token allowing to access service.
+     *
+     * @param stage stage name
+     * @param artifactName artifact name
+     * @return version of the artifact
+     * @throws ClientException when retrieve error occurs
+     */
+    public static String tag(String stage, String artifactName) throws ClientException {
+        String artifactzToken = System.getenv("ARTIFACTZ_TOKEN");
+        if (artifactzToken == null) {
+            logger.error("Artifactz token must be specified");
+            throw new ClientException("Artifactz token must be specified");
+        }
+
+        String httpProxy = System.getenv("HTTP_PROXY");
+
+        ServiceClientBuilder clientBuilder = new ServiceClientBuilder(artifactzToken);
+
+        if (httpProxy != null) {
+            clientBuilder.withProxyUrl(httpProxy);
+        }
+
+        AtomicReference<String> version = new AtomicReference<>("latest");
+        ServiceClient client = clientBuilder.build();
+        Stage stageData = client.retrieveVersions(stage, artifactName);
+        if (stage != null) {
+            logger.info("Had response from the artifactz.io");
+            stageData.getArtifacts().forEach(artifact -> {
+                if (artifact.getArtifactName().equals(artifactName)) {
+                    version.set(artifact.getVersion());
+                }
+            });
+        } else {
+            logger.error("Cannot retrieve version from the service");
+        }
+        return version.get();
     }
 }

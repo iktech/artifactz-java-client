@@ -1,9 +1,10 @@
 val compatibility: String? by project
 val ossUsername: String? by project
 val ossPassword: String? by project
+val projectGroup: Any by project
 val tagName: String? = System.getenv("RELEASE_TAG")
-group = "io.iktech"
-version = tagName ?: "1.3-SNAPSHOT"
+group = projectGroup
+version = tagName ?: "1.4-SNAPSHOT"
 
 plugins {
     // Apply the java-library plugin for API and implementation separation.
@@ -14,14 +15,12 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
     withJavadocJar()
     withSourcesJar()
 }
 
 jacoco {
-    toolVersion = "0.8.12"
+    toolVersion = "0.8.13"
 }
 
 tasks.jacocoTestReport {
@@ -93,14 +92,15 @@ repositories {
 }
 
 dependencies {
-    api("org.apache.httpcomponents.client5:httpclient5:5.4.1")
-    api("org.apache.commons:commons-lang3:3.17.0")
-    api("com.fasterxml.jackson.core:jackson-annotations:2.18.2")
-    api("com.fasterxml.jackson.core:jackson-databind:2.18.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.4")
+    api("org.apache.httpcomponents.client5:httpclient5:5.5")
+    api("org.apache.commons:commons-lang3:3.18.0")
+    api("com.fasterxml.jackson.core:jackson-annotations:2.19.2")
+    api("com.fasterxml.jackson.core:jackson-databind:2.19.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
     testImplementation("com.jayway.jsonpath:json-path:2.9.0")
-    testImplementation("org.slf4j:slf4j-api:2.0.16")
+    testImplementation("org.slf4j:slf4j-api:2.0.17")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
 }
 
 tasks.test {

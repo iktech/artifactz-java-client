@@ -60,6 +60,9 @@ To retrieve artifact details at a particular stage:
             new String[]{"test-data", "test-api"}); // Array of the artifact names
 ```
 
+Use a handy static method tag(stageName, artifactName) to get the current version of the artifact at the stage 
+or `latest` if it does not exist
+
 ## License
 
 See [LICENSE](LICENSE).
