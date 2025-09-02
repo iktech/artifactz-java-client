@@ -1,3 +1,5 @@
+import org.jreleaser.model.Active
+
 val compatibility: String? by project
 val ossUsername: String? by project
 val ossPassword: String? by project
@@ -12,6 +14,7 @@ plugins {
     id("maven-publish")
     id("jacoco")
     id("signing")
+    id("org.jreleaser") version "1.20.0"
 }
 
 java {
@@ -26,6 +29,24 @@ jacoco {
 tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
+    }
+}
+
+jreleaser {
+    signing {
+        active.set(Active.ALWAYS)
+        armored.set(true)
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                register("sonatype") {
+                    active.set(Active.ALWAYS)
+                    url = "https://central.sonatype.com/api/v1/publisher"
+                    layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
+                }
+            }
+        }
     }
 }
 
@@ -64,16 +85,7 @@ publishing {
 
     repositories {
         maven {
-            name = "ossrh-staging-api"
-            credentials {
-                username = System.getenv("MAVEN_USERNAME") ?: ossUsername ?: ""
-                password = System.getenv("MAVEN_PASSWORD") ?: ossPassword ?: ""
-            }
-
-            val releasesRepoUrl = "https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/"
-            val snapshotsRepoUrl = "https://ossrh-staging-api.central.sonatype.com/content/repositories/snapshots/"
-
-            url = uri(if (version.toString().endsWith("-SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
+            url = layout.buildDirectory.dir("staging-deploy").get().asFile.toURI()
         }
     }
 }
@@ -100,7 +112,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
     testImplementation("com.jayway.jsonpath:json-path:2.9.0")
     testImplementation("org.slf4j:slf4j-api:2.0.17")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:+")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
 }
 
