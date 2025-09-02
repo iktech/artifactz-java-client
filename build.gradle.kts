@@ -32,6 +32,10 @@ tasks.jacocoTestReport {
     }
 }
 
+tasks.jreleaserRelease {
+    dependsOn("publish")
+}
+
 jreleaser {
     signing {
         active.set(Active.ALWAYS)
