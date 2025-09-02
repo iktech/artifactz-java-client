@@ -6,8 +6,24 @@ name: Build
 on:
   push:
     branches: [ '*' ]
+    paths:
+      - .github/workflows/gradle.yml
+      - gradle/**/*
+      - src/**/*
+      - build.gradle.kts
+      - gradle.properties
+      - settings.gradle.kts
+      - sonar-project.properties
   pull_request:
       branches: [ master ]
+      paths:
+        - .github/workflows/gradle.yml
+        - gradle/**/*
+        - src/**/*
+        - build.gradle.kts
+        - gradle.properties
+        - settings.gradle.kts
+        - sonar-project.properties
 
 jobs:
   build:
