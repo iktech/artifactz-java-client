@@ -37,10 +37,34 @@ tasks.jreleaserRelease {
 }
 
 jreleaser {
+    project {
+        description = "Artifactz.io Java Client Library"
+        authors = listOf("IKtech Limited")
+        license = "The MIT License (MIT)"
+        links {
+            homepage = "https://github.com/iktech/artifactz-java-client"
+            bugTracker = "https://github.com/iktech/artifactz-java-client/issues"
+            contact = "https://iktech.io"
+        }
+        inceptionYear = "2020"
+        vendor = "IKtech Limited"
+        copyright = "Copyright (c) IKtech Limited"
+    }
+
+    release {
+        github {
+            commitAuthor {
+                name = "Igor Kolomiyets"
+                email = "igor.kolomiyets@iktech.io"
+            }
+        }
+    }
+
     signing {
         active.set(Active.ALWAYS)
         armored.set(true)
     }
+
     deploy {
         maven {
             mavenCentral {
