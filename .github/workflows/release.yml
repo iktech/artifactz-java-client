@@ -47,6 +47,7 @@ jobs:
         path: |
           build/jreleaser/trace.log
           build/jreleaser/output.properties
+          build/staging-deploy
     - name: Publish Artifact Info
       uses: iktech/publish-artifact-javascript-action@v1.0.0
       with:
