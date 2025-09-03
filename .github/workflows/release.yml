@@ -39,6 +39,7 @@ jobs:
         JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
         JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
         JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_SECRET_KEY_PASSWORD }}
+        JRELEASER_BRANCH: master
     - name: JReleaser release output
       if: always()
       uses: actions/upload-artifact@v4
@@ -47,7 +48,6 @@ jobs:
         path: |
           build/jreleaser/trace.log
           build/jreleaser/output.properties
-          build/staging-deploy
     - name: Publish Artifact Info
       uses: iktech/publish-artifact-javascript-action@v1.0.0
       with:
