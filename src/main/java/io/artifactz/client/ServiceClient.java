@@ -502,7 +502,7 @@ public class ServiceClient {
                         .filter(v -> v.getArtifactName().equals(artifactName))
                                 .map(Version::getVersion).toList();
                 if (!tags.isEmpty()) {
-                    tag = tags.getFirst();
+                    tag = tags.get(0);
                 }
             } else {
                 logger.error("Cannot retrieve version from the service");
