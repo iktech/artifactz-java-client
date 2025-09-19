@@ -3,12 +3,13 @@
 
 name: Release
 on:
-  release:
-    types: [published]
-
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag to create'
+        required: true
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -36,7 +37,7 @@ jobs:
         JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         JRELEASER_MAVENCENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
         JRELEASER_MAVENCENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-        RELEASE_TAG: ${{ github.event.release.tag_name }}
+        RELEASE_TAG: ${{ github.event.inputs.tag_name }}
         JRELEASER_GPG_SECRET_KEY: ${{ secrets.JRELEASER_GPG_SECRET_KEY }}
         JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.JRELEASER_GPG_PUBLIC_KEY }}
         JRELEASER_GPG_PASSPHRASE: ${{ secrets.JRELEASER_GPG_SECRET_KEY_PASSWORD }}
