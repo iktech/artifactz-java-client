@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -454,41 +455,61 @@ public class ServiceClient {
     /**
      * The tag() method returns a current version from the artifactz.io server that is registered against artifact at a specified stage.
      * Method expects the environment variable ARTIFACTZ_TOKEN to be present in the environment which contains a valid artifactz.io
-     * API token allowing to access service.
+     * API token allowing to access service. If it cannot retrieve version or version does not exist method returns `latest` tag.
      *
      * @param stage stage name
      * @param artifactName artifact name
      * @return version of the artifact
-     * @throws ClientException when retrieve error occurs
      */
-    public static String tag(String stage, String artifactName) throws ClientException {
+    public static String tag(String stage, String artifactName) {
+        return tag(stage, artifactName, "latest");
+    }
+    /**
+     * The tag() method returns a current version from the artifactz.io server that is registered against artifact at a specified stage.
+     * Method expects the environment variable ARTIFACTZ_TOKEN to be present in the environment which contains a valid artifactz.io
+     * API token allowing to access service. If it cannot retrieve version or version does not exist method returns `defaultTag` value.
+     *
+     * @param stage stage name
+     * @param artifactName artifact name
+     * @param defaultTag default tag to return when the version is not associated with artifact at the specified stage
+     * @return version of the artifact
+     */
+    public static String tag(String stage, String artifactName, String defaultTag) {
+        String tag = defaultTag;
+
         String artifactzToken = System.getenv("ARTIFACTZ_TOKEN");
-        if (artifactzToken == null) {
-            logger.error("Artifactz token must be specified");
-            throw new ClientException("Artifactz token must be specified");
-        }
+        try {
+            if (artifactzToken == null) {
+                logger.error("Artifactz token must be specified");
+                throw new ClientException("Artifactz token must be specified");
+            }
 
-        String httpProxy = System.getenv("HTTP_PROXY");
+            String httpProxy = System.getenv("HTTP_PROXY");
 
-        ServiceClientBuilder clientBuilder = new ServiceClientBuilder(artifactzToken);
+            ServiceClientBuilder clientBuilder = new ServiceClientBuilder(artifactzToken);
 
-        if (httpProxy != null) {
-            clientBuilder.withProxyUrl(httpProxy);
-        }
+            if (httpProxy != null) {
+                clientBuilder.withProxyUrl(httpProxy);
+            }
 
-        AtomicReference<String> version = new AtomicReference<>("latest");
-        ServiceClient client = clientBuilder.build();
-        Stage stageData = client.retrieveVersions(stage, artifactName);
-        if (stage != null) {
-            logger.info("Had response from the artifactz.io");
-            stageData.getArtifacts().forEach(artifact -> {
-                if (artifact.getArtifactName().equals(artifactName)) {
-                    version.set(artifact.getVersion());
+            ServiceClient client = clientBuilder.build();
+            Stage stageData = client.retrieveVersions(stage, artifactName);
+            if (stage != null) {
+                logger.info("Had response from the artifactz.io");
+                List<String> tags = stageData
+                        .getArtifacts()
+                        .stream()
+                        .filter(v -> v.getArtifactName().equals(artifactName))
+                                .map(Version::getVersion).toList();
+                if (!tags.isEmpty()) {
+                    tag = tags.getFirst();
                 }
-            });
-        } else {
-            logger.error("Cannot retrieve version from the service");
+            } else {
+                logger.error("Cannot retrieve version from the service");
+            }
+        } catch (ClientException e) {
+            logger.error("Cannot retrieve version from the service", e);
         }
-        return version.get();
+        return tag;
     }
 }

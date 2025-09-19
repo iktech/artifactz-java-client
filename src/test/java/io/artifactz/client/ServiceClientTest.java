@@ -4,6 +4,7 @@ import io.artifactz.client.exception.ClientException;
 import io.artifactz.client.model.Stage;
 import org.junit.jupiter.api.*;
 
+import static io.artifactz.client.ServiceClient.tag;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -288,5 +289,12 @@ public class ServiceClientTest {
         assertEquals("Automated Integration Tests", stage.getStage());
         assertNotNull(stage.getArtifacts());
         assertEquals(0, stage.getArtifacts().size());
+    }
+
+    @Test
+    @Order(16)
+    public void shouldReturnTag() {
+        String tag = tag("Development","test");
+        assertEquals("0.0.0.1", tag);
     }
 }

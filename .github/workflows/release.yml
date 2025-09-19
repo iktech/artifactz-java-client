@@ -23,6 +23,7 @@ jobs:
       run: ./gradlew build -PreadWriteToken="${{ secrets.READ_WRITE_ARTIFACTZ_TEST_TOKEN }}" -PreadOnlyToken="${{ secrets.READ_ONLY_ARTIFACTZ_TEST_TOKEN }}" -PwriteOnlyToken="${{ secrets.WRITE_ONLY_ARTIFACTZ_TEST_TOKEN }}"
       env:
         RELEASE_TAG: ${{ github.event.release.tag_name }}
+        ARTIFACTZ_TOKEN: ${{ secrets.PRODUCTION_ARTIFACTZ_TOKEN }}
     - name: Publish Unit Test Results
       uses: EnricoMi/publish-unit-test-result-action@v1
       if: always()
