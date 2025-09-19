@@ -60,4 +60,4 @@ jobs:
         type: JAR
         groupId: io.iktech
         artifactId: artifactz-client
-        version: ${{ github.event.release.tag_name }}
+        version: ${{ github.event.inputs.tag_name }}
