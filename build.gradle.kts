@@ -3,7 +3,7 @@ import org.jreleaser.model.Active
 val compatibility = project.property("compatibility") as String
 val ossUsername = project.property("ossUsername") as String
 val ossPassword = project.property("ossPassword") as String?
-val projectGroup = project.property("ossPassword") as Any
+val projectGroup = project.property("projectGroup") as Any
 val tagName: String? = System.getenv("RELEASE_TAG")
 group = projectGroup
 version = tagName ?: "1.5-SNAPSHOT"
