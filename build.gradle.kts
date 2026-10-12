@@ -1,6 +1,5 @@
 import org.jreleaser.model.Active
 
-val compatibility = project.property("compatibility") as String?
 val projectGroup = project.property("projectGroup") as Any
 val tagName: String? = System.getenv("RELEASE_TAG")
 group = projectGroup
@@ -16,6 +15,9 @@ plugins {
 }
 
 java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+
     withJavadocJar()
     withSourcesJar()
 }
