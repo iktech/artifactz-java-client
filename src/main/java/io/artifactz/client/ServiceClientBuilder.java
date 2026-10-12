@@ -1,6 +1,6 @@
 package io.artifactz.client;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.artifactz.client.exception.ClientException;
 
 /**

@@ -1,6 +1,6 @@
 package io.artifactz.client.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.DocumentContext;
 
 public class JSONTest {

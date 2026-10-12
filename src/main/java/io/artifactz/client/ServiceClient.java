@@ -1,7 +1,7 @@
 package io.artifactz.client;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import io.artifactz.client.exception.ClientException;
 import io.artifactz.client.model.*;
 import org.apache.commons.lang3.StringUtils;
@@ -213,7 +213,7 @@ public class ServiceClient {
 
         try {
             this.prepareRequest(publishRequest, request);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new ClientException("Cannot create request", e);
         }
 
@@ -286,7 +286,7 @@ public class ServiceClient {
 
         try {
             this.prepareRequest(pushRequest, request);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new ClientException("Cannot create request", e);
         }
 
@@ -367,7 +367,7 @@ public class ServiceClient {
         }
     }
 
-    private void prepareRequest(HttpUriRequestBase request, Request data) throws JsonProcessingException{
+    private void prepareRequest(HttpUriRequestBase request, Request data) throws JacksonException {
         String content = objectMapper.writeValueAsString(data);
         StringEntity entity = new StringEntity(content, ContentType.APPLICATION_JSON);
         request.setEntity(entity);

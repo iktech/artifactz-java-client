@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -11,6 +12,7 @@ import java.io.Serializable;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorMessage implements Serializable {
+    @Serial
     private static final long serialVersionUID = -4073983053043758408L;
 
     /**

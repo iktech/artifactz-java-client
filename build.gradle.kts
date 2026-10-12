@@ -1,12 +1,12 @@
 import org.jreleaser.model.Active
 
-val compatibility: String? by project
-val ossUsername: String? by project
-val ossPassword: String? by project
-val projectGroup: Any by project
+val compatibility = project.property("compatibility") as String
+val ossUsername = project.property("ossUsername") as String
+val ossPassword = project.property("ossPassword") as String?
+val projectGroup = project.property("ossPassword") as Any
 val tagName: String? = System.getenv("RELEASE_TAG")
 group = projectGroup
-version = tagName ?: "1.4-SNAPSHOT"
+version = tagName ?: "1.5-SNAPSHOT"
 
 plugins {
     // Apply the java-library plugin for API and implementation separation.
@@ -14,7 +14,7 @@ plugins {
     id("maven-publish")
     id("jacoco")
     id("signing")
-    id("org.jreleaser") version "1.20.0"
+    id("org.jreleaser") version "1.26.0"
 }
 
 java {
@@ -23,7 +23,7 @@ java {
 }
 
 jacoco {
-    toolVersion = "0.8.13"
+    toolVersion = "0.8.15"
 }
 
 tasks.jacocoTestReport {
@@ -124,36 +124,36 @@ repositories {
 }
 
 dependencies {
-    api("org.apache.httpcomponents.client5:httpclient5:5.5")
-    api("org.apache.commons:commons-lang3:3.18.0")
-    api("com.fasterxml.jackson.core:jackson-annotations:2.19.2")
-    api("com.fasterxml.jackson.core:jackson-databind:2.19.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.13.4")
-    testImplementation("com.jayway.jsonpath:json-path:2.9.0")
-    testImplementation("org.slf4j:slf4j-api:2.0.17")
+    api("org.apache.httpcomponents.client5:httpclient5:5.6.4")
+    api("org.apache.commons:commons-lang3:3.21.0")
+    api("com.fasterxml.jackson.core:jackson-annotations:2.22")
+    api("tools.jackson.core:jackson-databind:3.2.3")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:6.1.3")
+    testImplementation("com.jayway.jsonpath:json-path:3.0.0")
+    testImplementation("org.slf4j:slf4j-api:2.0.20")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:+")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
 }
 
 tasks.test {
     // Use junit platform for unit tests.
     useJUnitPlatform()
-    var prop = project.properties["readWriteToken"]
+    var prop = project.findProperty("readWriteToken")
     if (prop != null) {
         systemProperty("readWriteToken", prop)
     }
 
-    prop = project.properties["readOnlyToken"]
+    prop = project.findProperty("readOnlyToken")
     if (prop != null) {
         systemProperty("readOnlyToken", prop)
     }
 
-    prop = project.properties["writeOnlyToken"]
+    prop = project.findProperty("writeOnlyToken")
     if (prop != null) {
         systemProperty("writeOnlyToken", prop)
     }
 
-    val url = project.properties["serviceUrl"]
+    val url = project.findProperty("serviceUrl")
     if (url != null) {
         systemProperty("serviceUrl", url)
     }

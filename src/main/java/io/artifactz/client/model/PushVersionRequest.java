@@ -5,11 +5,14 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.io.Serial;
+
 /**
  * The JSON message for the artifact push through the flow of the artifactz.io service
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PushVersionRequest extends Request {
+    @Serial
     private static final long serialVersionUID = 1719249389867475917L;
 
     /**
